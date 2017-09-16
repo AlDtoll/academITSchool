@@ -1,4 +1,6 @@
-package ru.academits.tolmachev.range;
+package ru.academits.tolmachev.main;
+
+import ru.academits.tolmachev.range.Range;
 
 import java.util.Scanner;
 
@@ -11,8 +13,8 @@ public class Main {
         double from = in.nextDouble();
         System.out.printf("и где заканчивается ");
         double to = in.nextDouble();
-        Range range = new Range(from, to);
-        double residual = range.calculateInterval();
+        Range range = new Range(from,to);
+        double residual = range.getLength();
         System.out.printf("Длина интервала %f%n", residual);
 
         System.out.printf("Какое число проверить на принадлежность диапазону? ");
@@ -24,7 +26,3 @@ public class Main {
         }
     }
 }
-
-
-
-

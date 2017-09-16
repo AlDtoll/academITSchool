@@ -1,21 +1,35 @@
 package ru.academits.tolmachev.range;
 
-import static java.lang.Math.abs;
-
-class Range {
+public class Range {
     private double from;
     private double to;
+
+    public double getFrom() {
+        return from;
+    }
+
+    public void setFrom(double from) {
+        this.from = from;
+    }
+
+    public double getTo() {
+        return to;
+    }
+
+    public void setTo(double to) {
+        this.to = to;
+    }
 
     public Range(double from, double to) {
         this.from = from;
         this.to = to;
     }
 
-    public double calculateInterval() {
-        return abs(to - from);
+    public double getLength() {
+        return to - from;
     }
 
     public boolean isInside(double number) {
-        return from <= number && number <= to || to <= number && number <= from;
+        return from <= number && number <= to;
     }
 }
