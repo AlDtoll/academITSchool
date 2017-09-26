@@ -35,21 +35,21 @@ public class Range {
     }
 
     public Range getIntersection(Range interval) {
-        if (interval.to - from < epsilon || interval.from - to > epsilon) {
+        if (from - interval.to > epsilon || interval.from - to > epsilon) {
             return null;
         } else {
-            double newLeftSide = interval.from - from < epsilon ? from : interval.from;
+            double newLeftSide = from - interval.from > epsilon ? from : interval.from;
             double newRightSide = interval.to - to > epsilon ? to : interval.to;
             return new Range(newLeftSide, newRightSide);
         }
     }
 
     public Range[] getUnion(Range interval) {
-        if (interval.to - from < epsilon || interval.from - to > epsilon) {
+        if (from - interval.to > epsilon || interval.from - to > epsilon) {
             return new Range[]{new Range(from, to), new Range(interval.from, interval.to)};
         } else {
             double newLeftSide = interval.from - from > epsilon ? from : interval.from;
-            double newRightSide = interval.to - to < epsilon ? to : interval.to;
+            double newRightSide = to - interval.to > epsilon ? to : interval.to;
             return new Range[]{new Range(newLeftSide, newRightSide)};
         }
     }
@@ -57,14 +57,14 @@ public class Range {
     public Range[] getResidual(Range interval) {
         if (Math.abs(interval.from - from) <= epsilon && Math.abs(interval.to - to) <= epsilon) {
             return null;
-        } else if (interval.from - to > epsilon || interval.to - from < epsilon) {
+        } else if (interval.from - to > epsilon || from - interval.to > epsilon) {
             return new Range[]{new Range(from, to)};
-        } else if (interval.from - from > epsilon && interval.to - to < epsilon) {
+        } else if (interval.from - from > epsilon && to - interval.to > epsilon) {
             return new Range[]{new Range(from, interval.from), new Range(interval.to, to)};
         } else {
             double newLeftSide;
             double newRightSide;
-            if (interval.from - from <= epsilon) {
+            if (from - interval.from >= epsilon) {
                 newLeftSide = interval.to;
                 newRightSide = to;
             } else {
