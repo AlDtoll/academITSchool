@@ -6,23 +6,42 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Программа для вычисления интервала с дополнительным функционалом ");
+        System.out.println("Программа для поиска пересечения, объединения и разности двух интервалов ");
 
-        System.out.printf("Введите от какого числа начинается интервал ");
+        System.out.print("Введите первый и второй интервал ");
         Scanner in = new Scanner(System.in);
-        double from = in.nextDouble();
-        System.out.printf("и где заканчивается ");
-        double to = in.nextDouble();
-        Range range = new Range(from,to);
-        double residual = range.getLength();
-        System.out.printf("Длина интервала %f%n", residual);
+        Range firstRange = new Range(in.nextDouble(), in.nextDouble());
+        Range secondRange = new Range(in.nextDouble(), in.nextDouble());
 
-        System.out.printf("Какое число проверить на принадлежность диапазону? ");
-        double number = in.nextDouble();
-        if (range.isInside(number)){
-            System.out.printf("Число принадлежит диапазону");
+        Range intersection = firstRange.getIntersection(secondRange);
+        if (intersection == null) {
+            System.out.println("Пересечения нет");
         } else {
-            System.out.printf("Число за пределами диапазона");
+            System.out.printf("Пересечение: [%f,%f]%n", intersection.getFrom(), intersection.getTo());
+        }
+
+        Range[] union = firstRange.getUnion(secondRange);
+        if (union.length == 1) {
+            System.out.printf("Объединение: [%f,%f]%n", union[0].getFrom(), union[0].getTo());
+        } else {
+            System.out.printf("Объединение: [%f,%f] [%f,%f]%n", union[0].getFrom(), union[0].getTo(), union[1].getFrom(), union[1].getTo());
+        }
+
+        Range[] residual = firstRange.getResidual(secondRange);
+        if (residual == null) {
+            System.out.println("Разности нет");
+        } else if (residual.length == 1) {
+            char leftBracket = '[';
+            if (firstRange.getFrom() == secondRange.getTo()) {
+                leftBracket = '(';
+            }
+            char rightBracket = ']';
+            if (firstRange.getTo() == secondRange.getFrom()) {
+                rightBracket = ')';
+            }
+            System.out.printf("Разность: %c%f,%f%c%n", leftBracket, residual[0].getFrom(), residual[0].getTo(), rightBracket);
+        } else {
+            System.out.printf("Разность: [%f,%f] [%f,%f]%n", residual[0].getFrom(), residual[0].getTo(), residual[1].getFrom(), residual[1].getTo());
         }
     }
 }

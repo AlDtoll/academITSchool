@@ -32,4 +32,46 @@ public class Range {
     public boolean isInside(double number) {
         return from <= number && number <= to;
     }
+
+    public Range getIntersection(Range interval) {
+        if (interval.to > from || interval.from > to) {
+            return null;
+        } else {
+            double newLeftSide = interval.from < from ? from : interval.from;
+            double newRightSide = interval.to > to ? to : interval.to;
+            return new Range(newLeftSide, newRightSide);
+        }
+    }
+
+    public Range[] getUnion(Range interval) {
+        if (interval.to < from || interval.from > to) {
+            return new Range[]{new Range(from, to), new Range(interval.from, interval.to)};
+        } else {
+            double newLeftSide = interval.from > from ? from : interval.from;
+            double newRightSide = interval.to < to ? to : interval.to;
+            return new Range[]{new Range(newLeftSide, newRightSide)};
+        }
+    }
+
+    public Range[] getResidual(Range interval) {
+        if (interval.from == from && interval.to == to) {
+            return null;
+        } else if (interval.from > to || interval.to < from) {
+            return new Range[]{new Range(from, to)};
+        } else if (interval.from > from && interval.to < to) {
+            return new Range[]{new Range(from, interval.from), new Range(interval.to, to)};
+        } else {
+            double newLeftSide;
+            double newRightSide;
+            if (interval.from <= from) {
+                newLeftSide = interval.to;
+                newRightSide = to;
+            } else {
+                newLeftSide = from;
+                newRightSide = interval.from;
+            }
+            return new Range[]{new Range(newLeftSide, newRightSide)};
+        }
+    }
 }
+
