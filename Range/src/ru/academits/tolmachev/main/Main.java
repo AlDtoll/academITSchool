@@ -31,15 +31,7 @@ public class Main {
         if (residual == null) {
             System.out.println("Разности нет");
         } else if (residual.length == 1) {
-            char leftBracket = '[';
-            if (firstRange.getFrom() == secondRange.getTo()) {
-                leftBracket = '(';
-            }
-            char rightBracket = ']';
-            if (firstRange.getTo() == secondRange.getFrom()) {
-                rightBracket = ')';
-            }
-            System.out.printf("Разность: %c%f,%f%c%n", leftBracket, residual[0].getFrom(), residual[0].getTo(), rightBracket);
+            System.out.printf("Разность: [%f,%f]%n", residual[0].getFrom(), residual[0].getTo());
         } else {
             System.out.printf("Разность: [%f,%f] [%f,%f]%n", residual[0].getFrom(), residual[0].getTo(), residual[1].getFrom(), residual[1].getTo());
         }

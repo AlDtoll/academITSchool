@@ -3,6 +3,7 @@ package ru.academits.tolmachev.range;
 public class Range {
     private double from;
     private double to;
+    private double epsilon = 1.0e-10;
 
     public double getFrom() {
         return from;
@@ -34,36 +35,36 @@ public class Range {
     }
 
     public Range getIntersection(Range interval) {
-        if (interval.to > from || interval.from > to) {
+        if (interval.to - from < epsilon || interval.from - to > epsilon) {
             return null;
         } else {
-            double newLeftSide = interval.from < from ? from : interval.from;
-            double newRightSide = interval.to > to ? to : interval.to;
+            double newLeftSide = interval.from - from < epsilon ? from : interval.from;
+            double newRightSide = interval.to - to > epsilon ? to : interval.to;
             return new Range(newLeftSide, newRightSide);
         }
     }
 
     public Range[] getUnion(Range interval) {
-        if (interval.to < from || interval.from > to) {
+        if (interval.to - from < epsilon || interval.from - to > epsilon) {
             return new Range[]{new Range(from, to), new Range(interval.from, interval.to)};
         } else {
-            double newLeftSide = interval.from > from ? from : interval.from;
-            double newRightSide = interval.to < to ? to : interval.to;
+            double newLeftSide = interval.from - from > epsilon ? from : interval.from;
+            double newRightSide = interval.to - to < epsilon ? to : interval.to;
             return new Range[]{new Range(newLeftSide, newRightSide)};
         }
     }
 
     public Range[] getResidual(Range interval) {
-        if (interval.from == from && interval.to == to) {
+        if (Math.abs(interval.from - from) <= epsilon && Math.abs(interval.to - to) <= epsilon) {
             return null;
-        } else if (interval.from > to || interval.to < from) {
+        } else if (interval.from - to > epsilon || interval.to - from < epsilon) {
             return new Range[]{new Range(from, to)};
-        } else if (interval.from > from && interval.to < to) {
+        } else if (interval.from - from > epsilon && interval.to - to < epsilon) {
             return new Range[]{new Range(from, interval.from), new Range(interval.to, to)};
         } else {
             double newLeftSide;
             double newRightSide;
-            if (interval.from <= from) {
+            if (interval.from - from <= epsilon) {
                 newLeftSide = interval.to;
                 newRightSide = to;
             } else {
