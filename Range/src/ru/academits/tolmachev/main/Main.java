@@ -28,8 +28,8 @@ public class Main {
         }
 
         Range[] residual = firstRange.getResidual(secondRange);
-        if (residual == null) {
-            System.out.println("Разности нет");
+        if (residual.length == 0) {
+            System.out.print("Разности нет");
         } else if (residual.length == 1) {
             System.out.printf("Разность: [%f,%f]%n", residual[0].getFrom(), residual[0].getTo());
         } else {
