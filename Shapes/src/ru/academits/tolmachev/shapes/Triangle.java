@@ -1,4 +1,4 @@
 package ru.academits.tolmachev.shapes;
 
-public class Main {
+public class Triangle extends Shapes {
 }

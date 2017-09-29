@@ -34,11 +34,11 @@ public class Range {
     }
 
     public Range getIntersection(Range interval) {
-        if (interval.to < from || interval.from > to) {
+        if (interval.to <= from || interval.from >= to) {
             return null;
         } else {
-            double newLeftSide = interval.from < from ? from : interval.from;
-            double newRightSide = interval.to > to ? to : interval.to;
+            double newLeftSide = Math.max(from, interval.from);
+            double newRightSide = Math.min(interval.to, to);
             return new Range(newLeftSide, newRightSide);
         }
     }
@@ -47,22 +47,22 @@ public class Range {
         if (interval.to < from || interval.from > to) {
             return new Range[]{new Range(from, to), new Range(interval.from, interval.to)};
         } else {
-            double newLeftSide = interval.from > from ? from : interval.from;
-            double newRightSide = interval.to < to ? to : interval.to;
+            double newLeftSide = Math.min(from, interval.from);
+            double newRightSide = Math.max(interval.to, to);
             return new Range[]{new Range(newLeftSide, newRightSide)};
         }
     }
 
     public Range[] getResidual(Range interval) {
-        if (interval.from == from && interval.to == to) {
+        if (interval.from <= from && interval.to >= to) {
             return new Range[0];
         } else if (interval.from > to || interval.to < from) {
             return new Range[]{new Range(from, to)};
         } else if (interval.from > from && interval.to < to) {
             return new Range[]{new Range(from, interval.from), new Range(interval.to, to)};
         } else {
-            double newLeftSide;
-            double newRightSide;
+            double newLeftSide;// = Math.min(from, interval.to);
+            double newRightSide;// = Math.min(interval.from, to);
             if (interval.from <= from) {
                 newLeftSide = interval.to;
                 newRightSide = to;
