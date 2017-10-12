@@ -58,8 +58,12 @@ public class Triangle implements Shape {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || o.getClass() != this.getClass()) return false;
+        if (o == this) {
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
 
         Triangle triangle = (Triangle) o;
         return x1 == triangle.x1 && y1 == triangle.y1
@@ -73,7 +77,7 @@ public class Triangle implements Shape {
         b = getDistance(x3, x1, y3, y1);
     }
 
-    private double getDistance(double x1, double x2, double y1, double y2) {
+    private static double getDistance(double x1, double x2, double y1, double y2) {
         return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 

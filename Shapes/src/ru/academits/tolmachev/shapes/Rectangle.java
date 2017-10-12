@@ -38,8 +38,12 @@ public class Rectangle implements Shape {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || o.getClass() != this.getClass()) return false;
+        if (o == this) {
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
 
         Rectangle rectangle = (Rectangle) o;
         return widht == rectangle.widht && height == rectangle.height;

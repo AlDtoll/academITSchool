@@ -35,8 +35,12 @@ public class Square implements Shape {
     }
 
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || o.getClass() != this.getClass()) return false;
+        if (o == this){
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()){
+            return false;
+        }
 
         Square square = (Square) o;
         return sideLength == square.sideLength;
