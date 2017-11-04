@@ -1,16 +1,16 @@
 package ru.academits.tolmachev.shapes;
 
 public class Rectangle implements Shape {
-    private double widht;
+    private double width;
     private double height;
 
     public Rectangle(double width, double height) {
         this.height = height;
-        this.widht = width;
+        this.width = width;
     }
 
     public double getWidth() {
-        return widht;
+        return width;
     }
 
     public double getHeight() {
@@ -18,21 +18,21 @@ public class Rectangle implements Shape {
     }
 
     public double getArea() {
-        return widht * height;
+        return width * height;
     }
 
     public double getPerimeter() {
-        return (widht + height) * 2;
+        return (width + height) * 2;
     }
 
     public String toString() {
-        return String.format("прямоугольник шириной %f и высотой %f", widht, height);
+        return String.format("прямоугольник шириной %f и высотой %f", width, height);
     }
 
     public int hashCode() {
         final int prime = 13;
         int hash = 1;
-        hash = prime * hash + (int) widht;
+        hash = prime * hash + (int) width;
         hash = prime * hash + (int) height;
         return hash;
     }
@@ -46,6 +46,6 @@ public class Rectangle implements Shape {
         }
 
         Rectangle rectangle = (Rectangle) o;
-        return widht == rectangle.widht && height == rectangle.height;
+        return width == rectangle.width && height == rectangle.height;
     }
 }
