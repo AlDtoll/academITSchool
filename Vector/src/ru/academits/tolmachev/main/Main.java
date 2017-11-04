@@ -24,14 +24,16 @@ public class Main {
         System.out.println("Результат умножения вектора на 3.5 " + v2.multVector(3.5));
         System.out.println("Результат разворота вектора " + v2.turnVector());
         System.out.println("Длина вектора " + v2.getLength());
+        System.out.println(v5.equals(v4));
         System.out.println(v5.equals(v6));
         System.out.println(v3 + " + " + v6 + " = " + Vector.additionTwoVectors(v3, v6));
         System.out.println(v6 + " + " + v3 + " = " + Vector.additionTwoVectors(v6, v3));
         System.out.println(v3);
+        System.out.println(v6);
         System.out.println(v3 + " - " + v6 + " = " + Vector.subtractionTwoVectors(v3, v6));
         System.out.println(v6 + " - " + v3 + " = " + Vector.subtractionTwoVectors(v6, v3));
-        System.out.println(v3 + " * " + v6 + " = " + Vector.multiplicationTwoVectors(v3, v6));
-        System.out.println(v6 + " * " + v3 + " = " + Vector.multiplicationTwoVectors(v6, v3));
+        System.out.println("Скалярное произведение векторов" + v3 + " и " + v6 + " = " + Vector.multiplicationTwoVectors(v3, v6));
+        System.out.println("Скалярное произведение векторов" + v6 + " и " + v3 + " = " + Vector.multiplicationTwoVectors(v6, v3));
 
 
     }
