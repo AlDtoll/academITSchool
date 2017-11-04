@@ -15,7 +15,6 @@ public class Main {
         // Чтение в список строки из файла
         ArrayList<String> lines = new ArrayList<>();
         Scanner in = new Scanner(new FileInputStream("input_strings.txt"));
-//        for (int i = 0; i<3; i++){
         while (in.hasNext()) {
             lines.add(in.nextLine());
         }
