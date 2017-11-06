@@ -19,14 +19,11 @@ public class Vector {
     }
 
     public Vector(double[] array) {
-        this(array.length);
-        this.elements = Arrays.copyOf(array, array.length);
+        this(array.length, array);
     }
 
     public Vector(int n, double[] array) {
-        this(n);
-        int numberOfStep = Math.min(n, array.length);
-        this.elements = Arrays.copyOf(array, numberOfStep);
+        this.elements = Arrays.copyOf(array, n);
     }
 
     public int getSize() {
@@ -36,11 +33,10 @@ public class Vector {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("{");
-        int i = 0;
-        for (; i < this.elements.length - 1; i++) {
+        for (int i = 0; i < this.elements.length - 1; i++) {
             str.append(this.elements[i]).append(", ");
         }
-        str.append(this.elements[i])
+        str.append(this.elements[this.elements.length - 1])
                 .append("}");
         return str.toString();
     }
@@ -105,21 +101,20 @@ public class Vector {
     }
 
     public static Vector additionTwoVectors(Vector v1, Vector v2) {
-        Vector newVector = new Vector(Math.max(v1.elements.length, v2.elements.length));
-        newVector.elements = Arrays.copyOf(v1.elements, Math.max(v1.elements.length, v2.elements.length));
+        Vector newVector = new Vector(v1);
         return newVector.addVector(v2);
 
     }
 
     public static Vector subtractionTwoVectors(Vector v1, Vector v2) {
-        Vector newVector = new Vector(Math.max(v1.elements.length, v2.elements.length));
-        newVector.elements = Arrays.copyOf(v1.elements, Math.max(v1.elements.length, v2.elements.length));
+        Vector newVector = new Vector(v1);
         return newVector.subVector(v2);
     }
 
     public static double multiplicationTwoVectors(Vector v1, Vector v2) {
         double scalar = 0;
-        for (int i = 0; i < Math.min(v1.elements.length, v2.elements.length); i++) {
+        int currentMin = Math.min(v1.elements.length, v2.elements.length);
+        for (int i = 0; i < currentMin; i++) {
             scalar += v1.elements[i] * v2.elements[i];
         }
         return scalar;
