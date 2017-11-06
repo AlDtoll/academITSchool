@@ -21,10 +21,10 @@ public class Main {
         System.out.println(lines);
 
         // Удаление четных чисел
-        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(1, 5, 2, 1, 3, 5, 4, 5));
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
 
         System.out.println(list);
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = list.size() - 1; i >= 0; i--) {
             if (list.get(i) % 2 == 0) {
                 list.remove(i);
             }
