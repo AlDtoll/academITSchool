@@ -23,7 +23,11 @@ public class Vector {
     }
 
     public Vector(int n, double[] array) {
-        this.elements = Arrays.copyOf(array, n);
+        if (n <= 0) {
+            throw new IllegalArgumentException("Размерность должна быть положительным числом");
+        } else {
+            this.elements = Arrays.copyOf(array, n);
+        }
     }
 
     public int getSize() {
