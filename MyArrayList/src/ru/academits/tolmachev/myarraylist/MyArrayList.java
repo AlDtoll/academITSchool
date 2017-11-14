@@ -7,6 +7,7 @@ import java.util.ListIterator;
 
 public class MyArrayList<E> implements List<E> {
 
+    @SuppressWarnings("unchecked")
     private E[] items = (E[]) new Object[10];
     private int length = 0;
 
@@ -40,18 +41,33 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public boolean add(Object o) {
-        return false;
+    public boolean add(E element) {
+        if (length >= items.length) {
+            increaseCapacity();
+        }
+        items[length] = element;
+        ++length;
+        return true;
+    }
+
+    private void increaseCapacity() {
+        E[] old = items;
+        items = (E[]) new Object[old.length * 2];
+        System.arraycopy(old, 0, items, 0, old.length);
     }
 
     @Override
     public boolean remove(Object o) {
+
         return false;
     }
 
     @Override
-    public boolean addAll(Collection c) {
-        return false;
+    public boolean addAll(Collection <? extends E> c) {
+        for (E item: c) {
+            add(item);
+        }
+        return true;
     }
 
     @Override
@@ -66,24 +82,49 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        return items[index];
+        if (index > length) {
+            throw new IllegalArgumentException("Выход за пределы массива");
+        } else {
+            return items[index];
+        }
     }
 
     @Override
     public E set(int index, E element) {
-        E temp = items[index];
-        items[index] = element;
-        return temp;
+        if (index > length) {
+            throw new IllegalArgumentException("Выход за пределы массива");
+        } else {
+            E temp = items[index];
+            items[index] = element;
+            return temp;
+        }
     }
 
     @Override
     public void add(int index, E element) {
+        if (index > length) {
+            throw new IllegalArgumentException("Выход за пределы массива");
+        } else {
+            if (index < length - 1) {
+                System.arraycopy(items, index + 1, items, index, length - index - 1);
+            }
+            --length;
+        }
 
     }
 
     @Override
     public E remove(int index) {
-        return null;
+        if (index > length) {
+            throw new IllegalArgumentException("Выход за пределы массива");
+        } else {
+            E temp = items[index];
+            if (index < length - 1) {
+                System.arraycopy(items, index + 1, items, index, length - index - 1);
+            }
+            --length;
+            return temp;
+        }
     }
 
     @Override
@@ -128,11 +169,17 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E[] toArray(Object[] a) {
-        return (E[]) new Object[0];
+        return (E[]) new Object[length];
     }
 
     public String toString() {
-        String str = new String();
-        return "1";
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for (int i = 0; i < length - 1; i++) {
+            str.append(this.items[i]).append(", ");
+        }
+        str.append(this.items[length - 1])
+                .append("]");
+        return str.toString();
     }
 }
