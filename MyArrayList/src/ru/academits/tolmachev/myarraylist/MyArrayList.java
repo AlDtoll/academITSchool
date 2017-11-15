@@ -31,8 +31,24 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public Iterator iterator() {
-        return null;
+    public Iterator<E> iterator() {
+        return new Iterator<>() {
+            private int currentElement = 0;
+
+            @Override
+            public boolean hasNext() {
+                return (currentElement < length) && items[currentElement] != null;
+            }
+
+            @Override
+            public E next() {
+                return items[currentElement + 1];
+            }
+
+            public void remove() {
+                items[currentElement] = null;
+            }
+        };
     }
 
     @Override
@@ -63,8 +79,8 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public boolean addAll(Collection <? extends E> c) {
-        for (E item: c) {
+    public boolean addAll(Collection<? extends E> c) {
+        for (E item : c) {
             add(item);
         }
         return true;
@@ -108,7 +124,7 @@ public class MyArrayList<E> implements List<E> {
             if (index < length - 1) {
                 System.arraycopy(items, index + 1, items, index, length - index - 1);
             }
-            --length;
+            ++length;
         }
 
     }
