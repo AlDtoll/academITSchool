@@ -9,12 +9,38 @@ public class MyArrayList<E> implements List<E> {
     private int length = 0;
 
     public MyArrayList() {
-
     }
 
-    @Override
-    public int size() {
-        return length;
+    @SuppressWarnings("unchecked")
+    public MyArrayList(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Вместимость должна быть положительным числом");
+        }
+        items = (E[]) new Object[capacity];
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean trimToSize(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Вместимость должна быть положительным числом");
+        }
+        if (items.length > capacity) {
+            items = (E[]) new Object[capacity];
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean ensureCapacity(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Вместимость должна быть положительным числом");
+        }
+        if (items.length < capacity) {
+            items = (E[]) new Object[capacity];
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -29,13 +55,13 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index > length - 1) {
-            throw new IllegalArgumentException("Выход за пределы массива");
-        } else {
-            System.arraycopy(items, index, items, index + 1, length - index);
-            items[index] = element;
-            ++length;
+        if (index > length) {
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
+        System.arraycopy(items, index, items, index + 1, length - index);
+        items[index] = element;
+        ++length;
+
     }
 
     @Override
@@ -49,22 +75,21 @@ public class MyArrayList<E> implements List<E> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (index > length - 1) {
-            throw new IllegalArgumentException("Выход за пределы массива");
-        } else {
-            if (items.length < length + c.size()) {
-                E[] old = items;
-                items = (E[]) new Object[length + c.size()];
-                System.arraycopy(old, 0, items, 0, old.length);
-            }
-            System.arraycopy(items, index, items, index + c.size(), length - index);
-            int i = index;
-            for (E item : c) {
-                items[i] = item;
-                i++;
-            }
-            length += c.size();
+        if (index > length) {
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
+        if (items.length < length + c.size()) {
+            E[] old = items;
+            items = (E[]) new Object[length + c.size()];
+            System.arraycopy(old, 0, items, 0, old.length);
+        }
+        System.arraycopy(items, index, items, index + c.size(), length - index);
+        int i = index;
+        for (E item : c) {
+            items[i] = item;
+            i++;
+        }
+        length += c.size();
         return true;
     }
 
@@ -81,10 +106,14 @@ public class MyArrayList<E> implements List<E> {
         if (length == 0) {
             return false;
         }
-        for (int i = 0; i < length; i++) {
-            if (items[i] == o || (o == null && items[i] == null)) {
-                return true;
-            }
+//        for (int i = 0; i < length; i++) {
+//            if (items[i] == o || (o == null && items[i] == null)) {
+//                return true;
+//            }
+//        }
+        int index = indexOf(o);
+        if (index != -1) {
+            return true;
         }
         return false;
     }
@@ -105,10 +134,9 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public E get(int index) {
         if (index > length - 1) {
-            throw new IllegalArgumentException("Выход за пределы массива");
-        } else {
-            return items[index];
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
+        return items[index];
     }
 
     @Override
@@ -122,7 +150,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < length; i++) {
-            if (items[i] == o) {
+            if (items[i].equals(o)) {
                 return i;
             }
         }
@@ -146,6 +174,9 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public E next() {
+                if (currentElement == length - 1) {
+                    throw new NoSuchElementException("Выход за пределы массива");
+                }
                 return items[currentElement++];
             }
 
@@ -156,17 +187,96 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
+    public int lastIndexOf(Object o) {
+        for (int i = length - 1; i >= 0; i--) {
+            if (items[i] == o) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public ListIterator<E> listIterator() {
+        return new ListIterator<E>() {
+            private int currentElement = 0;
+
+            @Override
+            public boolean hasNext() {
+                return (currentElement < length) && items[currentElement] != null;
+            }
+
+            @Override
+            public E next() {
+                if (currentElement == length - 1) {
+                    throw new NoSuchElementException("Конец коллекции - нет следующего элемента");
+                }
+                return items[currentElement++];
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return (currentElement > 0) && items[currentElement] != null;
+            }
+
+            @Override
+            public E previous() {
+                if (currentElement == 0) {
+                    throw new NoSuchElementException("Начало коллеции - нет предыдушего элемента");
+                }
+                return items[currentElement--];
+            }
+
+            @Override
+            public int nextIndex() {
+                if (currentElement == length - 1) {
+                    return size();
+                }
+                return currentElement + 1;
+            }
+
+            @Override
+            public int previousIndex() {
+                if (currentElement == 0) {
+                    return -1;
+                }
+                return currentElement - 1;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void set(E e) {
+                items[currentElement] = e;
+            }
+
+            @Override
+            public void add(E e) {
+
+            }
+        };
+    }
+
+    @Override
+    public ListIterator listIterator(int index) {
+        return null;
+    }
+
+    @Override
     public E remove(int index) {
         if (index > length - 1) {
-            throw new IllegalArgumentException("Выход за пределы массива");
-        } else {
-            E temp = items[index];
-            if (index < length - 1) {
-                System.arraycopy(items, index + 1, items, index, length - index - 1);
-            }
-            --length;
-            return temp;
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
+        E temp = items[index];
+        if (index < length - 1) {
+            System.arraycopy(items, index + 1, items, index, length - index - 1);
+//            items=Arrays.copyOf(items,index);
+        }
+        --length;
+        return temp;
     }
 
     @Override
@@ -176,9 +286,8 @@ public class MyArrayList<E> implements List<E> {
             System.arraycopy(items, index + 1, items, index, length - index - 1);
             --length;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -195,32 +304,16 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public E set(int index, E element) {
         if (index > length - 1) {
-            throw new IllegalArgumentException("Выход за пределы массива");
-        } else {
-            E temp = items[index];
-            items[index] = element;
-            return temp;
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
+        E temp = items[index];
+        items[index] = element;
+        return temp;
     }
 
     @Override
-    public int lastIndexOf(Object o) {
-        for (int i = length - 1; i >= 0; i--) {
-            if (items[i] == o) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    public ListIterator listIterator() {
-        return null;
-    }
-
-    @Override
-    public ListIterator listIterator(int index) {
-        return null;
+    public int size() {
+        return length;
     }
 
     @Override
@@ -247,7 +340,7 @@ public class MyArrayList<E> implements List<E> {
 
     public String toString() {
         if (length == 0) {
-            throw new IllegalArgumentException("Пустой массив");
+            throw new IndexOutOfBoundsException("Пустой массив");
         }
         StringBuilder str = new StringBuilder();
         str.append("[");
@@ -261,9 +354,10 @@ public class MyArrayList<E> implements List<E> {
 
     @SuppressWarnings("unchecked")
     private void increaseCapacity() {
-        E[] old = items;
-        items = (E[]) new Object[old.length * 2];
-        System.arraycopy(old, 0, items, 0, old.length);
+//        E[] old = items;
+//        items = (E[]) new Object[old.length * 2];
+//        System.arraycopy(old, 0, items, 0, old.length);
+        items = Arrays.copyOf(items, items.length * 2);
     }
 
 }

@@ -9,9 +9,8 @@ public class Vector {
     public Vector(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("Размерность должна быть положительным числом");
-        } else {
-            this.elements = new double[n];
         }
+        this.elements = new double[n];
     }
 
     public Vector(Vector vector) {
@@ -25,9 +24,8 @@ public class Vector {
     public Vector(int n, double[] array) {
         if (n <= 0) {
             throw new IllegalArgumentException("Размерность должна быть положительным числом");
-        } else {
-            this.elements = Arrays.copyOf(array, n);
         }
+        this.elements = Arrays.copyOf(array, n);
     }
 
     public int getSize() {

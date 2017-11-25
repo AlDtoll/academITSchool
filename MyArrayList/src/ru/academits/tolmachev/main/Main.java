@@ -39,9 +39,9 @@ public class Main {
         myList.addAll(myList1);
         System.out.println(myList);
         System.out.println(myList.size());
-        myList.add(4, 3);
+        myList.add(5, 3);
         System.out.println("Проверка add по индексу " + myList);
-        myList.addAll(2, myList1);
+        myList.addAll(6, myList1);
         System.out.println("Проверка addAll по индексу " + myList);
         System.out.println("Проверка contains " + myList.contains(3));
         System.out.println("Проверка indexOf " + myList.indexOf(22));
