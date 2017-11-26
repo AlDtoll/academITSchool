@@ -60,9 +60,7 @@ public class Main {
         System.out.println("Проверка retainAll " + listR.retainAll(listR1) + " " + listR);
         System.out.println("myList " + myList);
         System.out.println("Проверка retainAll " + myList.retainAll(listR1) + " " + myList);
-
-
+//        MyArrayList<Integer> listAsListTest = new MyArrayList<Integer>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
     }
-
 
 }

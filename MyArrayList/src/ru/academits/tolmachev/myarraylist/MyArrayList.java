@@ -317,12 +317,15 @@ public class MyArrayList<E> implements List<E> {
         boolean isChanged = false;
         for (Object item : c) {
             for (int i = 0; i < length; i++) {
-                if (items[i] != item) {
+                if (items[i].equals(item)) {
                     remove(i);
                     isChanged = true;
                 }
             }
         }
+//        for (int i=0; i < length; i++){
+//            f
+//        }
         return isChanged;
     }
 
@@ -348,14 +351,21 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public Object[] toArray() {
-        return new Object[0];
+    public E[] toArray() {
+        return Arrays.copyOf(items, length);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public E[] toArray(Object[] a) {
-        return (E[]) new Object[length];
+        if (a.length < length) {
+            toArray();
+        }
+        a = Arrays.copyOf(items, length);
+        if (a.length > length) {
+            a[length] = null;
+        }
+        return (E[]) a;
     }
 
     public String toString() {
