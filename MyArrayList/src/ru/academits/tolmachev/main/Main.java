@@ -12,8 +12,9 @@ public class Main {
 
         System.out.println("Программа демонстрирует использование собственной коллекции ArrayList");
 
-
-        MyArrayList<Integer> myList = new MyArrayList<Integer>();
+        MyArrayList<Integer> myList = new MyArrayList<Integer>(10);
+        System.out.println("Проверка trimToSize " + myList.trimToSize(3));
+        System.out.println("Проверка ensureCapacity " + myList.ensureCapacity(5));
         for (int i = 0; i <= 4; i++) {
             myList.add(30 + i);
         }
@@ -30,8 +31,13 @@ public class Main {
         System.out.println("Проверка remove по индексу" + myList);
         myList.addAll(list);
         System.out.println("Проверка addAll" + myList);
-        myList.removeAll(list);
-        System.out.println("Проверка removeAll " + myList);
+        System.out.println("Проверка containsAll " + myList.containsAll(list));
+        ArrayList<Integer> list1 = new ArrayList<>(Arrays.asList(11, 10));
+        System.out.println("Проверка containsAll " + myList.containsAll(list1));
+        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(5, 2));
+        System.out.println("Проверка containsAll " + myList.containsAll(list2));
+        System.out.println("Проверка removeAll " + myList.removeAll(list2));
+        System.out.println(myList);
         myList.addAll(myList1);
         System.out.println("Проверка итератора " + myList);
         myList.clear();
@@ -48,6 +54,13 @@ public class Main {
         myList.remove((Integer) 22);
         System.out.println("Проверка remove " + myList);
         System.out.println("Проверка lastIndexOf " + myList.lastIndexOf(23));
+        ArrayList<Integer> listR = new ArrayList<>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
+        ArrayList<Integer> listR1 = new ArrayList<>(Arrays.asList(2, 5, 3));
+        System.out.println("listR " + listR);
+        System.out.println("Проверка retainAll " + listR.retainAll(listR1) + " " + listR);
+        System.out.println("myList " + myList);
+        System.out.println("Проверка retainAll " + myList.retainAll(listR1) + " " + myList);
+
 
     }
 

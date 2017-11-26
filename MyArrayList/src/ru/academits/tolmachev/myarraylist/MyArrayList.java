@@ -66,9 +66,15 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        for (E item : c) {
-            add(item);
+        if (length + c.size() > items.length) {
+            items = Arrays.copyOf(items, length + c.size());
         }
+        int i = length;
+        for (E item : c) {
+            items[i] = item;
+            i++;
+        }
+        length += c.size();
         return true;
     }
 
@@ -79,9 +85,7 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         if (items.length < length + c.size()) {
-            E[] old = items;
-            items = (E[]) new Object[length + c.size()];
-            System.arraycopy(old, 0, items, 0, old.length);
+            items = Arrays.copyOf(items, length + c.size());
         }
         System.arraycopy(items, index, items, index + c.size(), length - index);
         int i = index;
@@ -103,19 +107,20 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        if (length == 0) {
-            return false;
+        return length != 0 && indexOf(o) != -1;
+    }
+
+    @Override
+    public boolean containsAll(Collection c) {
+        if (c.size() > items.length) {
+            throw new IndexOutOfBoundsException("Входная коллекция больше");
         }
-//        for (int i = 0; i < length; i++) {
-//            if (items[i] == o || (o == null && items[i] == null)) {
-//                return true;
-//            }
-//        }
-        int index = indexOf(o);
-        if (index != -1) {
-            return true;
+        for (Object item : c) {
+            if (!contains(item)) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -174,7 +179,7 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (currentElement == length - 1) {
+                if (currentElement == length) {
                     throw new NoSuchElementException("Выход за пределы массива");
                 }
                 return items[currentElement++];
@@ -189,7 +194,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = length - 1; i >= 0; i--) {
-            if (items[i] == o) {
+            if (items[i].equals(o)) {
                 return i;
             }
         }
@@ -208,7 +213,7 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (currentElement == length - 1) {
+                if (currentElement == length) {
                     throw new NoSuchElementException("Конец коллекции - нет следующего элемента");
                 }
                 return items[currentElement++];
@@ -255,7 +260,11 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public void add(E e) {
-
+                if (length == 0) {
+                    length++;
+                    items[0] = e;
+                }
+                items[currentElement + 1] = e;
             }
         };
     }
@@ -273,7 +282,6 @@ public class MyArrayList<E> implements List<E> {
         E temp = items[index];
         if (index < length - 1) {
             System.arraycopy(items, index + 1, items, index, length - index - 1);
-//            items=Arrays.copyOf(items,index);
         }
         --length;
         return temp;
@@ -292,14 +300,31 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection c) {
-        return false;
+        boolean isChanged = false;
+        for (Object item : c) {
+            for (int i = 0; i < length; i++) {
+                if (items[i].equals(item)) {
+                    remove(i);
+                    isChanged = true;
+                }
+            }
+        }
+        return isChanged;
     }
 
     @Override
-    public Object[] toArray() {
-        return new Object[0];
+    public boolean retainAll(Collection c) {
+        boolean isChanged = false;
+        for (Object item : c) {
+            for (int i = 0; i < length; i++) {
+                if (items[i] != item) {
+                    remove(i);
+                    isChanged = true;
+                }
+            }
+        }
+        return isChanged;
     }
-
 
     @Override
     public E set(int index, E element) {
@@ -316,20 +341,15 @@ public class MyArrayList<E> implements List<E> {
         return length;
     }
 
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public List subList(int fromIndex, int toIndex) {
         return null;
     }
 
     @Override
-    public boolean retainAll(Collection c) {
-        return false;
-    }
-
-
-    @Override
-    public boolean containsAll(Collection c) {
-        return false;
+    public Object[] toArray() {
+        return new Object[0];
     }
 
     @SuppressWarnings("unchecked")
@@ -352,11 +372,7 @@ public class MyArrayList<E> implements List<E> {
         return str.toString();
     }
 
-    @SuppressWarnings("unchecked")
     private void increaseCapacity() {
-//        E[] old = items;
-//        items = (E[]) new Object[old.length * 2];
-//        System.arraycopy(old, 0, items, 0, old.length);
         items = Arrays.copyOf(items, items.length * 2);
     }
 
