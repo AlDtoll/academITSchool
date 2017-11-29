@@ -55,7 +55,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index > length) {
+        if (index > length || index < 0) {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         System.arraycopy(items, index, items, index + 1, length - index);
@@ -81,7 +81,7 @@ public class MyArrayList<E> implements List<E> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (index > length) {
+        if (index > length || index < 0) {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         if (items.length < length + c.size()) {
@@ -138,7 +138,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index > length - 1) {
+        if (index >= length) {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         return items[index];
@@ -154,10 +154,16 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < length; i++) {
-            if (items[i].equals(o)) {
-                return i;
-            }
+        if (o == null) {
+            for (int i = 0; i < length; i++)
+                if (items[i] == null) {
+                    return i;
+                }
+        } else {
+            for (int i = 0; i < length; i++)
+                if (items[i].equals(o)) {
+                    return i;
+                }
         }
         return -1;
     }
@@ -174,7 +180,7 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public boolean hasNext() {
-                return (currentElement < length) && items[currentElement] != null;
+                return currentElement < length;
             }
 
             @Override
@@ -193,10 +199,16 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        for (int i = length - 1; i >= 0; i--) {
-            if (items[i].equals(o)) {
-                return i;
-            }
+        if (o == null) {
+            for (int i = length - 1; i >= 0; i--)
+                if (items[i] == null) {
+                    return i;
+                }
+        } else {
+            for (int i = length - 1; i >= 0; i--)
+                if ((items[i].equals(o))) {
+                    return i;
+                }
         }
         return -1;
     }
@@ -208,7 +220,7 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public boolean hasNext() {
-                return (currentElement < length) && items[currentElement] != null;
+                return currentElement < length;
             }
 
             @Override
@@ -221,7 +233,7 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public boolean hasPrevious() {
-                return (currentElement > 0) && items[currentElement] != null;
+                return currentElement > 0;
             }
 
             @Override
@@ -271,16 +283,19 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public ListIterator listIterator(int index) {
+        if (index < 0 || index > length) {
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
+        }
         return null;
     }
 
     @Override
     public E remove(int index) {
-        if (index > length - 1) {
+        if (index >= length || index < 0) {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         E temp = items[index];
-        if (index < length - 1) {
+        if (index <= length) {
             System.arraycopy(items, index + 1, items, index, length - index - 1);
         }
         --length;
@@ -331,7 +346,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index > length - 1) {
+        if (index >= length) {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         E temp = items[index];
