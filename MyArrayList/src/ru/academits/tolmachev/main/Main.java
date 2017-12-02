@@ -81,8 +81,8 @@ public class Main {
         System.out.println(ML1);
         System.out.println("Equals? " + ML1.equals(ML2));
         ArrayList<Integer> listWithNull = new ArrayList<>(Arrays.asList(6, 5, null, 21));
-        System.out.println("Проверка removeAll " + ML1.removeAll(listWithNull) + " " + ML1);
-//        System.out.println("Проверка retainAll " + ML1.retainAll(listWithNull) + " " + ML1);
+//        System.out.println("Проверка removeAll " + ML1.removeAll(listWithNull) + " " + ML1);
+        System.out.println("Проверка retainAll " + ML1.retainAll(listWithNull) + " " + ML1);
     }
 
 }

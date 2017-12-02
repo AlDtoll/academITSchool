@@ -20,7 +20,6 @@ public class MyArrayList<E> implements List<E> {
         items = (E[]) new Object[capacity];
     }
 
-    @SuppressWarnings("unchecked")
     public void trimToSize() {
         if (length == 0) {
             throw new IndexOutOfBoundsException("Пустой массив");
@@ -30,7 +29,6 @@ public class MyArrayList<E> implements List<E> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public boolean ensureCapacity(int capacity) {
         if (capacity <= 0) {
             throw new IllegalArgumentException("Вместимость должна быть положительным числом");
@@ -66,22 +64,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        if (length + c.size() > items.length) {
-            items = Arrays.copyOf(items, length + c.size());
-        }
-        int i = length;
-        boolean isChanged = false;
-        for (E item : c) {
-            items[i] = item;
-            i++;
-            isChanged = true;
-        }
-        if (isChanged) {
-            length += c.size();
-            modCount++;
-            return true;
-        }
-        return false;
+        return addAll(length, c);
     }
 
     @SuppressWarnings("unchecked")
@@ -147,7 +130,7 @@ public class MyArrayList<E> implements List<E> {
             return false;
         }
         for (int i = 0; i < length; i++) {
-            if (items[i] != e.items[i]) {
+            if (!Objects.equals(items[i], e.items[i])) {
                 return false;
             }
         }
@@ -169,7 +152,6 @@ public class MyArrayList<E> implements List<E> {
         }
         E temp = items[index];
         items[index] = element;
-        modCount++;
         return temp;
     }
 
@@ -183,11 +165,11 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < length; i++) {
-            if (o.equals(items[i])) {
+        for (int i = 0; i < length; i++)
+            if (Objects.equals(o, items[i])) {
                 return i;
             }
-        }
+
         return -1;
     }
 
@@ -222,12 +204,7 @@ public class MyArrayList<E> implements List<E> {
                 if (currentModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                if (currentElement >= length || currentElement < 0) {
-                    throw new IndexOutOfBoundsException("Выход за пределы массива");
-                }
-                items[currentElement] = null;
-                --length;
-                modCount++;
+                MyArrayList.this.remove(currentElement);
                 currentModCount = modCount;
             }
         };
@@ -236,7 +213,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = length - 1; i >= 0; i--) {
-            if (o.equals(items[i])) {
+            if (Objects.equals(o, items[i])) {
                 return i;
             }
         }
@@ -306,13 +283,7 @@ public class MyArrayList<E> implements List<E> {
                 if (currentModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                if (currentElement >= length || currentElement < 0) {
-                    throw new IndexOutOfBoundsException("Выход за пределы массива");
-                }
-                System.arraycopy(items, currentElement + 1, items, currentElement, length - currentElement - 1);
-                --length;
-                modCount++;
-                currentModCount = modCount;
+                MyArrayList.this.remove(currentElement);
             }
 
             @Override
@@ -324,8 +295,7 @@ public class MyArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 items[currentElement] = e;
-                modCount++;
-                currentModCount = modCount;
+
 
             }
 
@@ -375,7 +345,7 @@ public class MyArrayList<E> implements List<E> {
         boolean isChanged = false;
         for (Object item : c) {
             for (int i = 0; i < length; i++) {
-                if (items[i] == item) {
+                if (Objects.equals(items[i], item)) {
                     remove(i);
                     isChanged = true;
                 }
@@ -394,7 +364,7 @@ public class MyArrayList<E> implements List<E> {
         int newIndex = 0;
         for (int i = 0; i < length; i++) {
             for (Object item : c) {
-                if (items[i] == item) {
+                if (Objects.equals(items[i], item)) {
                     items[newIndex] = items[i];
                     newIndex++;
                     isChanged = true;
@@ -440,7 +410,7 @@ public class MyArrayList<E> implements List<E> {
 
     public String toString() {
         if (length == 0) {
-            return ("{}");
+            return ("[]");
         }
         StringBuilder str = new StringBuilder();
         str.append("[");
