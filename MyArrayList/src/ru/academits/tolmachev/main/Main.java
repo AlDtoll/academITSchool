@@ -13,15 +13,18 @@ public class Main {
         System.out.println("Программа демонстрирует использование собственной коллекции ArrayList");
 
         MyArrayList<Integer> myList = new MyArrayList<Integer>(10);
-        System.out.println("Проверка trimToSize " + myList.trimToSize(3));
-        System.out.println("Проверка ensureCapacity " + myList.ensureCapacity(5));
         for (int i = 0; i <= 4; i++) {
             myList.add(30 + i);
         }
+        System.out.println("myList " + myList);
+        System.out.println("Проверка ensureCapacity " + myList.ensureCapacity(30) + " " + myList);
         MyArrayList<Integer> myList1 = new MyArrayList<Integer>();
         for (int i = 0; i <= 4; i++) {
             myList1.add(20 + i);
         }
+        System.out.println("size myList " + myList.size());
+        myList.trimToSize();
+        System.out.println("Проверка trimToSize");
         ArrayList<Integer> list = new ArrayList<>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
         System.out.println("Проверка add " + myList);
         myList.set(3, 1);
@@ -29,8 +32,7 @@ public class Main {
         System.out.println("Проверка get " + myList.get(4));
         myList.remove(3);
         System.out.println("Проверка remove по индексу" + myList);
-        myList.addAll(list);
-        System.out.println("Проверка addAll" + myList);
+        System.out.println("Проверка addAll " + myList.addAll(list) + " " + myList);
         System.out.println("Проверка containsAll " + myList.containsAll(list));
         ArrayList<Integer> list1 = new ArrayList<>(Arrays.asList(11, 10));
         System.out.println("Проверка containsAll " + myList.containsAll(list1));
@@ -60,6 +62,27 @@ public class Main {
         System.out.println("Проверка retainAll " + listR.retainAll(listR1) + " " + listR);
         System.out.println("myList " + myList);
         System.out.println("Проверка retainAll " + myList.retainAll(listR1) + " " + myList);
+        MyArrayList<Integer> myList2 = new MyArrayList<Integer>();
+        System.out.println("Проверка " + myList2);
+
+        System.out.println();
+        MyArrayList<Integer> ML1 = new MyArrayList<Integer>();
+        for (int i = 0; i <= 4; i++) {
+            ML1.add(20 + i);
+        }
+        System.out.println(ML1);
+        MyArrayList<Integer> ML2 = new MyArrayList<Integer>();
+        for (int i = 0; i <= 4; i++) {
+            ML2.add(20 + i);
+        }
+        System.out.println(ML2);
+        System.out.println("Equals? " + ML1.equals(ML2));
+        ML1.set(3, null);
+        System.out.println(ML1);
+        System.out.println("Equals? " + ML1.equals(ML2));
+        ArrayList<Integer> listWithNull = new ArrayList<>(Arrays.asList(6, 5, null, 21));
+        System.out.println("Проверка removeAll " + ML1.removeAll(listWithNull) + " " + ML1);
+//        System.out.println("Проверка retainAll " + ML1.retainAll(listWithNull) + " " + ML1);
     }
 
 }

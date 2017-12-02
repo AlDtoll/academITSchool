@@ -21,15 +21,13 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean trimToSize(int capacity) {
-        if (capacity <= 0) {
-            throw new IllegalArgumentException("Вместимость должна быть положительным числом");
+    public void trimToSize() {
+        if (length == 0) {
+            throw new IndexOutOfBoundsException("Пустой массив");
         }
-        if (items.length > capacity) {
-            items = (E[]) new Object[capacity];
-            return true;
+        if (length < items.length) {
+            items = Arrays.copyOf(items, length);
         }
-        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -38,7 +36,7 @@ public class MyArrayList<E> implements List<E> {
             throw new IllegalArgumentException("Вместимость должна быть положительным числом");
         }
         if (items.length < capacity) {
-            items = (E[]) new Object[capacity];
+            items = Arrays.copyOf(items, capacity);
             return true;
         }
         return false;
@@ -72,13 +70,18 @@ public class MyArrayList<E> implements List<E> {
             items = Arrays.copyOf(items, length + c.size());
         }
         int i = length;
+        boolean isChanged = false;
         for (E item : c) {
             items[i] = item;
             i++;
+            isChanged = true;
         }
-        length += c.size();
-        modCount++;
-        return true;
+        if (isChanged) {
+            length += c.size();
+            modCount++;
+            return true;
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -92,13 +95,18 @@ public class MyArrayList<E> implements List<E> {
         }
         System.arraycopy(items, index, items, index + c.size(), length - index);
         int i = index;
+        boolean isChanged = false;
         for (E item : c) {
             items[i] = item;
             i++;
+            isChanged = true;
         }
-        length += c.size();
-        modCount++;
-        return true;
+        if (isChanged) {
+            length += c.size();
+            modCount++;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -139,7 +147,7 @@ public class MyArrayList<E> implements List<E> {
             return false;
         }
         for (int i = 0; i < length; i++) {
-            if (!items[i].equals(e.items[i])) {
+            if (items[i] != e.items[i]) {
                 return false;
             }
         }
@@ -148,10 +156,21 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index >= length) {
+        if (index >= length || index < 0) {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         return items[index];
+    }
+
+    @Override
+    public E set(int index, E element) {
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Выход за пределы массива");
+        }
+        E temp = items[index];
+        items[index] = element;
+        modCount++;
+        return temp;
     }
 
     @Override
@@ -164,16 +183,10 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        if (o == null) {
-            for (int i = 0; i < length; i++)
-                if (items[i] == null) {
-                    return i;
-                }
-        } else {
-            for (int i = 0; i < length; i++)
-                if (items[i].equals(o)) {
-                    return i;
-                }
+        for (int i = 0; i < length; i++) {
+            if (o.equals(items[i])) {
+                return i;
+            }
         }
         return -1;
     }
@@ -206,23 +219,26 @@ public class MyArrayList<E> implements List<E> {
             }
 
             public void remove() {
-                throw new UnsupportedOperationException();
+                if (currentModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (currentElement >= length || currentElement < 0) {
+                    throw new IndexOutOfBoundsException("Выход за пределы массива");
+                }
+                items[currentElement] = null;
+                --length;
+                modCount++;
+                currentModCount = modCount;
             }
         };
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        if (o == null) {
-            for (int i = length - 1; i >= 0; i--)
-                if (items[i] == null) {
-                    return i;
-                }
-        } else {
-            for (int i = length - 1; i >= 0; i--)
-                if ((items[i].equals(o))) {
-                    return i;
-                }
+        for (int i = length - 1; i >= 0; i--) {
+            if (o.equals(items[i])) {
+                return i;
+            }
         }
         return -1;
     }
@@ -277,23 +293,26 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public int nextIndex() {
-                if (currentElement == length - 1) {
-                    return size();
-                }
                 return currentElement + 1;
             }
 
             @Override
             public int previousIndex() {
-                if (currentElement == 0) {
-                    return -1;
-                }
                 return currentElement - 1;
             }
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException();
+                if (currentModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (currentElement >= length || currentElement < 0) {
+                    throw new IndexOutOfBoundsException("Выход за пределы массива");
+                }
+                System.arraycopy(items, currentElement + 1, items, currentElement, length - currentElement - 1);
+                --length;
+                modCount++;
+                currentModCount = modCount;
             }
 
             @Override
@@ -333,9 +352,7 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Выход за пределы массива");
         }
         E temp = items[index];
-        if (index <= length) {
-            System.arraycopy(items, index + 1, items, index, length - index - 1);
-        }
+        System.arraycopy(items, index + 1, items, index, length - index - 1);
         --length;
         modCount++;
         return temp;
@@ -347,9 +364,9 @@ public class MyArrayList<E> implements List<E> {
         if (index != -1) {
             System.arraycopy(items, index + 1, items, index, length - index - 1);
             --length;
+            modCount++;
             return true;
         }
-        modCount++;
         return false;
     }
 
@@ -358,14 +375,17 @@ public class MyArrayList<E> implements List<E> {
         boolean isChanged = false;
         for (Object item : c) {
             for (int i = 0; i < length; i++) {
-                if (items[i].equals(item)) {
+                if (items[i] == item) {
                     remove(i);
                     isChanged = true;
                 }
             }
         }
-        modCount++;
-        return isChanged;
+        if (isChanged) {
+            modCount++;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -374,7 +394,7 @@ public class MyArrayList<E> implements List<E> {
         int newIndex = 0;
         for (int i = 0; i < length; i++) {
             for (Object item : c) {
-                if (items[i].equals(item)) {
+                if (items[i] == item) {
                     items[newIndex] = items[i];
                     newIndex++;
                     isChanged = true;
@@ -382,19 +402,11 @@ public class MyArrayList<E> implements List<E> {
             }
         }
         length = newIndex;
-        modCount++;
-        return isChanged;
-    }
-
-    @Override
-    public E set(int index, E element) {
-        if (index >= length || index < 0) {
-            throw new IndexOutOfBoundsException("Выход за пределы массива");
+        if (isChanged) {
+            modCount++;
+            return true;
         }
-        E temp = items[index];
-        items[index] = element;
-        modCount++;
-        return temp;
+        return false;
     }
 
     @Override
@@ -416,17 +428,19 @@ public class MyArrayList<E> implements List<E> {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T[] toArray(T[] a) {
-        if (a.length < length)
+        if (a.length < length) {
             return (T[]) Arrays.copyOf(items, length);
+        }
         a = (T[]) Arrays.copyOf(items, length);
-        if (a.length > length)
+        if (a.length > length) {
             a[length] = null;
+        }
         return a;
     }
 
     public String toString() {
         if (length == 0) {
-            throw new IndexOutOfBoundsException("Пустой массив");
+            return ("{}");
         }
         StringBuilder str = new StringBuilder();
         str.append("[");
