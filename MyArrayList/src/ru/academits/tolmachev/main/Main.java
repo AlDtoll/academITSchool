@@ -55,12 +55,11 @@ public class Main {
         System.out.println("Проверка remove " + myList);
         System.out.println("Проверка lastIndexOf " + myList.lastIndexOf(23));
         ArrayList<Integer> listR = new ArrayList<>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
-        ArrayList<Integer> listR1 = new ArrayList<>(Arrays.asList(2, 5, 3));
+        ArrayList<Integer> listR1 = new ArrayList<>(Arrays.asList(2, 5, 3, 24));
         System.out.println("listR " + listR);
         System.out.println("Проверка retainAll " + listR.retainAll(listR1) + " " + listR);
         System.out.println("myList " + myList);
         System.out.println("Проверка retainAll " + myList.retainAll(listR1) + " " + myList);
-//        MyArrayList<Integer> listAsListTest = new MyArrayList<Integer>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
     }
 
 }
