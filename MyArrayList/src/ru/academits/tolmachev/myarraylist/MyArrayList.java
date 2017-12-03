@@ -304,14 +304,7 @@ public class MyArrayList<E> implements List<E> {
                 if (currentModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                if (length == 0) {
-                    length++;
-                    items[0] = e;
-                } else {
-                    items[currentElement + 1] = e;
-                }
-                modCount++;
-                currentModCount = modCount;
+                MyArrayList.this.add(currentElement, e);
             }
         };
     }
