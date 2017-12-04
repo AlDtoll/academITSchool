@@ -57,6 +57,7 @@ public class Main {
         System.out.println("Проверка remove " + myList);
         System.out.println("Проверка lastIndexOf " + myList.lastIndexOf(23));
         ArrayList<Integer> listR = new ArrayList<>(Arrays.asList(2, 1, 5, 2, 4, 1, 3, 5, 4, 5, 6));
+        listR.remove(5);
         ArrayList<Integer> listR1 = new ArrayList<>(Arrays.asList(2, 5, 3, 24));
         System.out.println("listR " + listR);
         System.out.println("Проверка retainAll " + listR.retainAll(listR1) + " " + listR);
@@ -83,6 +84,15 @@ public class Main {
         ArrayList<Integer> listWithNull = new ArrayList<>(Arrays.asList(6, 5, null, 21));
 //        System.out.println("Проверка removeAll " + ML1.removeAll(listWithNull) + " " + ML1);
         System.out.println("Проверка retainAll " + ML1.retainAll(listWithNull) + " " + ML1);
-    }
 
+        System.out.println();
+        MyArrayList<Integer> myListForRemoveAll = new MyArrayList<Integer>();
+        ArrayList<Integer> arrayListToAddAll = new ArrayList<Integer>(Arrays.asList(1,1,1,1,1,1,1,5,2,2,2,1,1,1,3,3,3,3,3));
+        myListForRemoveAll.addAll(arrayListToAddAll);
+        System.out.println(myListForRemoveAll);
+        ArrayList<Integer> arrayListToRemoveAll = new ArrayList<Integer>(Arrays.asList(2,3,3,1,1));
+        myListForRemoveAll.removeAll(arrayListToRemoveAll);
+        System.out.println(myListForRemoveAll);
+
+    }
 }
