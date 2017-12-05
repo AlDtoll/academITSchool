@@ -183,7 +183,7 @@ public class MyArrayList<E> implements List<E> {
         return new Iterator<E>() {// поставить 1.8
             private int currentElement = 0;
             private int currentModCount = modCount;
-            private boolean isMoved = false;
+            private int lastReturnElement = -1;
 
             @Override
             public boolean hasNext() {
@@ -198,19 +198,17 @@ public class MyArrayList<E> implements List<E> {
                 if (currentElement == length) {
                     throw new NoSuchElementException("Выход за пределы массива");
                 }
-                isMoved = true;
                 return items[currentElement++];
             }
 
             public void remove() {
-                if (!isMoved) {
+                if (lastReturnElement == -1) {
                     throw new IllegalStateException();
                 }
                 if (currentModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
                 MyArrayList.this.remove(currentElement);
-                isMoved = false;
             }
         };
     }
@@ -405,7 +403,7 @@ public class MyArrayList<E> implements List<E> {
         if (a.length < length) {
             return (T[]) Arrays.copyOf(items, length);
         }
-        a = (T[]) Arrays.copyOf(items, length);
+        System.arraycopy(items, 0, a, 0, length);
         if (a.length > length) {
             a[length] = null;
         }

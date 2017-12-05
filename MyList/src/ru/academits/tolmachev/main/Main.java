@@ -1,5 +1,6 @@
 package ru.academits.tolmachev.main;
 
+import ru.academits.tolmachev.mylist.ListItem;
 import ru.academits.tolmachev.mylist.MyList;
 
 public class Main {
@@ -8,8 +9,57 @@ public class Main {
 
         System.out.println("Программа демонстрирует использование односвязного списка");
 
-        MyList <Integer> myList = new MyList<>();
-        System.out.println(myList.getLengh());
+        MyList<Integer> myList = new MyList<>();
+        ListItem<Integer> e0 = new ListItem<Integer>(3);
+        ListItem<Integer> e1 = new ListItem<Integer>(9);
+        ListItem<Integer> e2 = new ListItem<Integer>(7);
+        ListItem<Integer> e3 = new ListItem<Integer>(22);
+        ListItem<Integer> e4 = new ListItem<Integer>(5);
+        ListItem<Integer> e5 = new ListItem<Integer>(11);
+        ListItem<Integer> e6 = new ListItem<Integer>(14);
 
+        myList.addToBegin(e0);
+        myList.addToBegin(e1);
+        myList.addToBegin(e2);
+        myList.addToBegin(e3);
+        myList.addToBegin(e4);
+        myList.addToBegin(e5);
+        myList.addToBegin(e6);
+        System.out.println("Список " + myList);
+
+        int index = 2;
+        System.out.println("Длинна списка " + myList.getLength());
+        System.out.println("Значение по " + index + " индексу: " + myList.getValue(index));
+        System.out.println("Установка по " + index + " индексу. Старое значение " + myList.setValue(index, 333));
+        System.out.println("Новое значение по " + index + " индексу: " + myList.getValue(index));
+        System.out.println("Список " + myList);
+        System.out.println("Получение первого элемента. Его значение: " + myList.getFirstNode().getData());
+        System.out.println();
+
+        index++;
+        System.out.println("Получение элемента по " + index + " индексу. Его значение: " + myList.getNode(index).getData());
+        index++;
+        System.out.println("Удаление элемента по " + index + " индексу. Его значение: " + myList.removeNode(index).getData());
+        System.out.println("Список " + myList);
+        ListItem<Integer> eToAdd = new ListItem<Integer>(101);
+        myList.addNode(index, eToAdd);
+        System.out.println("Добавление элемента со значением " + eToAdd.getData() + " по " + index + " индексу");
+        System.out.println("Список " + myList);
+        System.out.println("Удаление узла по зачению. Был узел со значением " + eToAdd.getData() + " удален? " + myList.removeNode(eToAdd));
+        System.out.println("Список " + myList);
+        System.out.println("Удаление первого элемента. Его значение было: " + myList.cutHead().getData());
+        System.out.println("Список " + myList);
+        System.out.println();
+
+        System.out.println("Размер списка " + myList.getLength());
+        index = 2;
+        System.out.println("Вставка после элемента с индексом " + index);
+        myList.addAfter(index, eToAdd);
+        System.out.println("Список " + myList);
+        System.out.println("Размер списка " + myList.getLength());
+        index = 3;
+        System.out.println("Удаление после элемента с индексом " + index);
+        myList.removeAfter(index);
+        System.out.println("Список " + myList);
     }
 }
