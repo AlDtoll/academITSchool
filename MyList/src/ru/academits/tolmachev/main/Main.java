@@ -61,5 +61,30 @@ public class Main {
         System.out.println("Удаление после элемента с индексом " + index);
         myList.removeAfter(index);
         System.out.println("Список " + myList);
+        myList.reverseList();
+        System.out.println("Повернутый список" + myList);
+        MyList<Integer> copyOfMyList = myList.copyList();
+        System.out.println("Копия списка " + copyOfMyList);
+        copyOfMyList.reverseList();
+        System.out.println("Оригинал списка " + myList);
+        System.out.println("Копия списка " + copyOfMyList);
+        System.out.println();
+
+        System.out.println("Хэшкод " + myList.hashCode());
+        System.out.println("Хэшкод " + copyOfMyList.hashCode());
+        MyList<Integer> myList1 = new MyList<>();
+        myList1.addToBegin(new ListItem<Integer>(11));
+        myList1.addToBegin(new ListItem<Integer>(333));
+        myList1.addToBegin(new ListItem<Integer>(22));
+        myList1.addToBegin(new ListItem<Integer>(101));
+        myList1.addToBegin(new ListItem<Integer>(3));
+        System.out.println("Хэшкод " + myList1.hashCode());
+        System.out.println("Сравнение списков. Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
+        myList.setValue(3, null);
+        myList1.setValue(3, null);
+        System.out.println("А теперь? Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
+        myList.setValue(2, null);
+        System.out.println("Ну а теперь? Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
+
     }
 }

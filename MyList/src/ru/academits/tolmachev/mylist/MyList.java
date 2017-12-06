@@ -1,5 +1,7 @@
 package ru.academits.tolmachev.mylist;
 
+import java.util.Objects;
+
 public class MyList<T> {
 
     private int length = 0;
@@ -108,6 +110,38 @@ public class MyList<T> {
         this.removeNode(index + 1);
     }
 
+    public void reverseList() {
+        ListItem<T> previousItem = null;
+        ListItem<T> item = head;
+        ListItem<T> temp;
+        while (item != null) {
+            temp = item.getNext();
+            item.setNext(previousItem);
+            previousItem = item;
+            item = temp;
+        }
+        head = previousItem;
+    }
+
+    public MyList<T> copyList() {
+        MyList<T> newList = new MyList<>();
+        if (length == 0) {
+            return newList;
+        }
+        ListItem<T> item = new ListItem<>(head.getData());
+        newList.head = item;
+        ListItem<T> sourceItem = head.getNext();
+        newList.length++;
+        while (sourceItem != null) {
+            ListItem<T> targetItem = new ListItem<>(sourceItem.getData());
+            item.setNext(targetItem);
+            item = targetItem;
+            sourceItem = sourceItem.getNext();
+            newList.length++;
+        }
+        return newList;
+    }
+
     public String toString() {
         if (length == 0) {
             return ("[]");
@@ -122,6 +156,42 @@ public class MyList<T> {
         str.append((item.getData()))
                 .append("]");
         return str.toString();
+    }
+
+    public int hashCode() {
+        final int prime = 13;
+        int hash = 1;
+        ListItem<T> item = head;
+        for (int i = 0; i < length; i++) {
+            hash = prime * hash + item.getData().hashCode();
+            item = item.getNext();
+        }
+        return hash;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        MyList<T> m = (MyList<T>) o;
+        if (this.length != m.length) {
+            return false;
+        }
+        ListItem<T> item = head;
+        ListItem<T> itemM = m.head;
+        for (int i = 0; i < length; i++) {
+            if (!Objects.equals(item.getData(), itemM.getData())) {
+                return false;
+            } else {
+                item = item.getNext();
+                itemM = itemM.getNext();
+            }
+        }
+        return true;
     }
 
 }
