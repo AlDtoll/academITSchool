@@ -5,6 +5,8 @@ import ru.academits.tolmachev.myarraylist.MyArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 public class Main {
 
@@ -63,8 +65,6 @@ public class Main {
         System.out.println("Проверка retainAll " + listR.retainAll(listR1) + " " + listR);
         System.out.println("myList " + myList);
         System.out.println("Проверка retainAll " + myList.retainAll(listR1) + " " + myList);
-        MyArrayList<Integer> myList2 = new MyArrayList<Integer>();
-        System.out.println("Проверка " + myList2);
 
         System.out.println();
         MyArrayList<Integer> ML1 = new MyArrayList<Integer>();
@@ -87,12 +87,25 @@ public class Main {
 
         System.out.println();
         MyArrayList<Integer> myListForRemoveAll = new MyArrayList<Integer>();
-        ArrayList<Integer> arrayListToAddAll = new ArrayList<Integer>(Arrays.asList(1,1,1,1,1,1,1,5,2,2,2,1,1,1,3,3,3,3,3));
+        ArrayList<Integer> arrayListToAddAll = new ArrayList<Integer>(Arrays.asList(1, 1, 1, 1, 1, 1, 1, 5, 2, 2, 2, 1, 1, 1, 3, 3, 3, 3, 3));
         myListForRemoveAll.addAll(arrayListToAddAll);
         System.out.println(myListForRemoveAll);
-        ArrayList<Integer> arrayListToRemoveAll = new ArrayList<Integer>(Arrays.asList(2,3,3,1,1));
+        ArrayList<Integer> arrayListToRemoveAll = new ArrayList<Integer>(Arrays.asList(2, 3, 3, 1, 1));
         myListForRemoveAll.removeAll(arrayListToRemoveAll);
         System.out.println(myListForRemoveAll);
 
+        MyArrayList<Integer> myListForIterator = new MyArrayList<Integer>();
+        myListForIterator.add(1);
+        myListForIterator.add(2);
+        myListForIterator.add(3);
+        myListForIterator.add(4);
+        System.out.println("Список до удаления" + myListForIterator);
+        Iterator<Integer> it = myListForIterator.iterator();
+        it.remove();
+        ListIterator<Integer> listIt = myListForIterator.listIterator();
+        listIt.remove();
+        listIt.remove();
+        listIt.add(10);
+        System.out.println("Список после удаления " + myListForIterator);
     }
 }

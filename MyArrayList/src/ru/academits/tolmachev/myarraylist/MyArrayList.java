@@ -183,7 +183,6 @@ public class MyArrayList<E> implements List<E> {
         return new Iterator<E>() {// поставить 1.8
             private int currentElement = 0;
             private int currentModCount = modCount;
-            private int lastReturnElement = -1;
 
             @Override
             public boolean hasNext() {
@@ -202,13 +201,11 @@ public class MyArrayList<E> implements List<E> {
             }
 
             public void remove() {
-                if (lastReturnElement == -1) {
-                    throw new IllegalStateException();
-                }
                 if (currentModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
                 MyArrayList.this.remove(currentElement);
+                currentModCount = modCount;
             }
         };
     }
@@ -238,7 +235,6 @@ public class MyArrayList<E> implements List<E> {
         return new ListIterator<E>() {
             private int currentElement = index;
             private int currentModCount = modCount;
-            private boolean isMoved = false;
 
             @Override
             public boolean hasNext() {
@@ -253,7 +249,6 @@ public class MyArrayList<E> implements List<E> {
                 if (currentElement == length) {
                     throw new NoSuchElementException("Конец коллекции - нет следующего элемента");
                 }
-                isMoved = true;
                 return items[currentElement++];
             }
 
@@ -268,7 +263,6 @@ public class MyArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 if (currentElement == 0) {
-                    isMoved = false;
                     throw new NoSuchElementException("Начало коллеции - нет предыдушего элемента");
                 }
                 return items[currentElement--];
@@ -286,14 +280,11 @@ public class MyArrayList<E> implements List<E> {
 
             @Override
             public void remove() {
-                if (!isMoved) {
-                    throw new IllegalStateException();
-                }
                 if (currentModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
                 MyArrayList.this.remove(currentElement);
-                isMoved = false;
+                currentModCount = modCount;
             }
 
             @Override
@@ -313,6 +304,7 @@ public class MyArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 MyArrayList.this.add(currentElement, e);
+                currentModCount = modCount;
             }
         };
     }
