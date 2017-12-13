@@ -36,16 +36,19 @@ public class Main {
         System.out.println("Получение первого элемента. Его значение: " + myList.getFirstNode().getData());
         System.out.println();
 
+
         index++;
+        System.out.println("Длинна списка " + myList.getLength());
         System.out.println("Получение элемента по " + index + " индексу. Его значение: " + myList.getNode(index).getData());
+        index = 4;
         index++;
-        System.out.println("Удаление элемента по " + index + " индексу. Его значение: " + myList.removeNode(index).getData());
+        System.out.println("Удаление элемента по " + index + " индексу. Его значение: " + myList.removeNode(index));
         System.out.println("Список " + myList);
-        ListItem<Integer> eToAdd = new ListItem<Integer>(101);
-        myList.addNode(index, eToAdd);
-        System.out.println("Добавление элемента со значением " + eToAdd.getData() + " по " + index + " индексу");
+        Integer valueToAdd = 101;
+        myList.addNode(index, valueToAdd);
+        System.out.println("Добавление элемента со значением " + valueToAdd + " по " + index + " индексу");
         System.out.println("Список " + myList);
-        System.out.println("Удаление узла по зачению. Был узел со значением " + eToAdd.getData() + " удален? " + myList.removeNode(eToAdd));
+        System.out.println("Удаление узла по зачению. Был узел со значением " + valueToAdd + " удален? " + myList.removeNode(valueToAdd));
         System.out.println("Список " + myList);
         System.out.println("Удаление первого элемента. Его значение было: " + myList.cutHead().getData());
         System.out.println("Список " + myList);
@@ -54,7 +57,7 @@ public class Main {
         System.out.println("Размер списка " + myList.getLength());
         index = 2;
         System.out.println("Вставка после элемента с индексом " + index);
-        myList.addAfter(index, eToAdd);
+        myList.addAfter(index, valueToAdd);
         System.out.println("Список " + myList);
         System.out.println("Размер списка " + myList.getLength());
         index = 3;
@@ -85,6 +88,8 @@ public class Main {
         System.out.println("А теперь? Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
         myList.setValue(2, null);
         System.out.println("Ну а теперь? Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
+        System.out.println("Хэшкод " + myList.hashCode());
+        System.out.println("Хэшкод " + myList1.hashCode());
 
     }
 }

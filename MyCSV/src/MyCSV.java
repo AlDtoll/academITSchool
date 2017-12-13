@@ -4,7 +4,7 @@ public class MyCSV {
 
     public static void main(String[] args) throws IOException {
 
-        System.out.println("CVS");
+        System.out.println("CSV");
 
         try (FileReader fileReader = new FileReader("CVS_test.txt")) {
             try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {

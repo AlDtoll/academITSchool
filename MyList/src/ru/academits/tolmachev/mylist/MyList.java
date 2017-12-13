@@ -20,13 +20,14 @@ public class MyList<T> {
     }
 
     public T setValue(int index, T value) {
-        T oldValue = this.getValue(index);
-        this.getNode(index).setData(value);
+        ListItem<T> item = this.getNode(index);
+        T oldValue = item.getData();
+        item.setData(value);
         return oldValue;
     }
 
     public ListItem<T> getNode(int index) {
-        if (index > length || index < 0) {
+        if (index >= length || index < 0) {
             throw new IndexOutOfBoundsException("Выход за пределы списка");
         }
         ListItem<T> item = head;
@@ -36,18 +37,19 @@ public class MyList<T> {
         return item;
     }
 
-    public ListItem<T> removeNode(int index) {
-        ListItem<T> oldNode = this.getNode(index);
+    public T removeNode(int index) {
+        T oldValue;
         if (index == 0) {
-            this.cutHead();
+            oldValue = this.cutHead().getData();
         } else {
             ListItem<T> previousItem = this.getNode(index - 1);
             ListItem<T> currentItem = previousItem.getNext();
+            oldValue = currentItem.getData();
             ListItem<T> nextItem = currentItem.getNext();
             previousItem.setNext(nextItem);
             length--;
         }
-        return oldNode;
+        return oldValue;
     }
 
     public void addToBegin(ListItem<T> listItem) {
@@ -61,22 +63,24 @@ public class MyList<T> {
 
     }
 
-    public void addNode(int index, ListItem<T> listItem) {
+    public void addNode(int index, T value) {
+        ListItem<T> item = new ListItem<T>(value);
         if (index == 0) {
-            this.addToBegin(listItem);
+            this.addToBegin(item);
         } else {
             ListItem<T> previousItem = this.getNode(index - 1);
             ListItem<T> currentItem = previousItem.getNext();
-            previousItem.setNext(listItem);
-            listItem.setNext(currentItem);
+            previousItem.setNext(item);
+            item.setNext(currentItem);
             length++;
         }
+
     }
 
-    public boolean removeNode(ListItem<T> listItem) {
+    public boolean removeNode(T value) {
         ListItem<T> item = head;
         for (int i = 0; i < length; i++) {
-            if (listItem.getData() == item.getData()) {
+            if (value == item.getData()) {
                 removeNode(i);
                 return true;
             } else {
@@ -96,11 +100,11 @@ public class MyList<T> {
         return oldItem;
     }
 
-    public void addAfter(int index, ListItem<T> listItem) {
+    public void addAfter(int index, T value) {
         if (index >= length) {
             throw new IllegalStateException("Не существует элемента для послевставки");
         }
-        this.addNode(index + 1, listItem);
+        this.addNode(index + 1, value);
     }
 
     public void removeAfter(int index) {
@@ -113,12 +117,11 @@ public class MyList<T> {
     public void reverseList() {
         ListItem<T> previousItem = null;
         ListItem<T> item = head;
-        ListItem<T> temp;
         while (item != null) {
-            temp = item.getNext();
+            ListItem<T> nextItem = item.getNext();
             item.setNext(previousItem);
             previousItem = item;
-            item = temp;
+            item = nextItem;
         }
         head = previousItem;
     }
@@ -163,12 +166,13 @@ public class MyList<T> {
         int hash = 1;
         ListItem<T> item = head;
         for (int i = 0; i < length; i++) {
-            hash = prime * hash + item.getData().hashCode();
-            item = item.getNext();
+            hash = prime * hash + ((item != null ? item.getData() : null) != null ? item.getData().hashCode() : 0);
+            item = (item != null ? item.getData() : null) != null ? item.getNext() : null;
         }
         return hash;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if (o == this) {
             return true;
