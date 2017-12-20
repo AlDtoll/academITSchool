@@ -18,13 +18,13 @@ public class Main {
         ListItem<Integer> e5 = new ListItem<Integer>(11);
         ListItem<Integer> e6 = new ListItem<Integer>(14);
 
-        myList.addToBegin(e0);
-        myList.addToBegin(e1);
-        myList.addToBegin(e2);
-        myList.addToBegin(e3);
-        myList.addToBegin(e4);
-        myList.addToBegin(e5);
-        myList.addToBegin(e6);
+        myList.addToBegin(3);
+        myList.addToBegin(9);
+        myList.addToBegin(7);
+        myList.addToBegin(22);
+        myList.addToBegin(5);
+        myList.addToBegin(11);
+        myList.addToBegin(14);
         System.out.println("Список " + myList);
 
         int index = 2;
@@ -76,11 +76,11 @@ public class Main {
         System.out.println("Хэшкод " + myList.hashCode());
         System.out.println("Хэшкод " + copyOfMyList.hashCode());
         MyList<Integer> myList1 = new MyList<>();
-        myList1.addToBegin(new ListItem<Integer>(11));
-        myList1.addToBegin(new ListItem<Integer>(333));
-        myList1.addToBegin(new ListItem<Integer>(22));
-        myList1.addToBegin(new ListItem<Integer>(101));
-        myList1.addToBegin(new ListItem<Integer>(3));
+        myList1.addToBegin(11);
+        myList1.addToBegin((333));
+        myList1.addToBegin((22));
+        myList1.addToBegin((101));
+        myList1.addToBegin((3));
         System.out.println("Хэшкод " + myList1.hashCode());
         System.out.println("Сравнение списков. Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
         myList.setValue(3, null);
@@ -90,6 +90,9 @@ public class Main {
         System.out.println("Ну а теперь? Список " + myList + " и " + myList1 + " равны? " + myList.equals(myList1));
         System.out.println("Хэшкод " + myList.hashCode());
         System.out.println("Хэшкод " + myList1.hashCode());
+        myList.removeNode(null);
+        System.out.println(myList);
+
 
     }
 }

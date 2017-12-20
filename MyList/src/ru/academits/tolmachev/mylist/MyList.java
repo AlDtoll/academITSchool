@@ -52,12 +52,13 @@ public class MyList<T> {
         return oldValue;
     }
 
-    public void addToBegin(ListItem<T> listItem) {
+    public void addToBegin(T value) {
+        ListItem<T> item = new ListItem<T>(value);
         if (head == null) {
-            head = listItem;
+            head = item;
         } else {
-            listItem.setNext(head);
-            head = listItem;
+            item.setNext(head);
+            head = item;
         }
         length++;
 
@@ -66,7 +67,7 @@ public class MyList<T> {
     public void addNode(int index, T value) {
         ListItem<T> item = new ListItem<T>(value);
         if (index == 0) {
-            this.addToBegin(item);
+            this.addToBegin(value);
         } else {
             ListItem<T> previousItem = this.getNode(index - 1);
             ListItem<T> currentItem = previousItem.getNext();
@@ -80,7 +81,7 @@ public class MyList<T> {
     public boolean removeNode(T value) {
         ListItem<T> item = head;
         for (int i = 0; i < length; i++) {
-            if (value == item.getData()) {
+            if (Objects.equals(value, item.getData())) {
                 removeNode(i);
                 return true;
             } else {
@@ -93,7 +94,7 @@ public class MyList<T> {
     public ListItem<T> cutHead() {
         ListItem<T> oldItem = head;
         if (head == null) {
-            throw new IllegalStateException("Пустой массив");
+            throw new IllegalStateException("Пустой список");
         }
         head = head.getNext();
         length--;
@@ -166,8 +167,8 @@ public class MyList<T> {
         int hash = 1;
         ListItem<T> item = head;
         for (int i = 0; i < length; i++) {
-            hash = prime * hash + ((item != null ? item.getData() : null) != null ? item.getData().hashCode() : 0);
-            item = (item != null ? item.getData() : null) != null ? item.getNext() : null;
+            hash = prime * hash + (item.getData() != null ? item.getData().hashCode() : 0);
+            item = item.getNext();
         }
         return hash;
     }
