@@ -83,7 +83,7 @@ public class Vector {
         return this;
     }
 
-    public Vector multVector(double scalar) {
+    public Vector multiplyVector(double scalar) {
         for (int i = 0; i < this.elements.length; i++) {
             this.elements[i] *= scalar;
         }
@@ -91,7 +91,7 @@ public class Vector {
     }
 
     public Vector turnVector() {
-        return multVector(-1);
+        return multiplyVector(-1);
     }
 
     public double getLength() {
@@ -101,6 +101,17 @@ public class Vector {
         }
         return Math.sqrt(sum);
     }
+
+    public double getElement(int index) {
+        return elements[index];
+    }
+
+    public double setElement(int index, double value) {
+        double oldValue = elements[index];
+        elements[index] = value;
+        return oldValue;
+    }
+
 
     public static Vector additionTwoVectors(Vector v1, Vector v2) {
         Vector newVector = new Vector(v1);

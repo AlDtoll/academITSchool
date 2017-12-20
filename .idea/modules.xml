@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/List/List.iml" filepath="$PROJECT_DIR$/List/List.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Matrix/Matrix.iml" filepath="$PROJECT_DIR$/Matrix/Matrix.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyArrayList/MyArrayList.iml" filepath="$PROJECT_DIR$/MyArrayList/MyArrayList.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyCSV/MyCSV.iml" filepath="$PROJECT_DIR$/MyCSV/MyCSV.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyHashTable/MyHashTable.iml" filepath="$PROJECT_DIR$/MyHashTable/MyHashTable.iml" />
