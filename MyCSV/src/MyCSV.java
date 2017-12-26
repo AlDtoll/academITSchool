@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Scanner;
 
 public class MyCSV {
 
@@ -6,119 +7,85 @@ public class MyCSV {
 
         System.out.println("CSV");
 
-        try (FileReader fileReader = new FileReader("CSV_test.txt")) {
-            try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-                PrintWriter writer = new PrintWriter("CSV_output.html");
-                writer.println("<table>");
-                String line = bufferedReader.readLine();// прочитали строку
+        System.out.println("Введите название файла");
+        Scanner in = new Scanner(System.in);
+        String path = "CSV_test";//in.nextLine();
 
-                String substring;
-                boolean isInQuotes = false;
-                boolean isTransfer = false;
-                while (line != null) {
-                    int startCell = 0;
-                    int cursor = 0;
-                    int endCell = 0;
-                    if (!isTransfer) {
-                        writer.println("<tr>");
-                    }
-                    while (endCell != line.length() && endCell != line.length() - 1) {
-                        int quote = line.indexOf("\"", cursor);
-                        if (isInQuotes) { // если мы в кавычках, то
-                            if (quote == -1) { // ищем кавычки
-                                endCell = line.length();// значит вся строка - часть ячейки
-                                if (!isTransfer) {
-                                    writer.println("<td>");
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path + ".txt"));
+             PrintWriter writer = new PrintWriter(path + ".html")) {
+            // Формирование шляпы
+            writer.println("<!DOCTYPE html>");
+            writer.println("<html>");
+            writer.println("<meta charset=\"utf-8\"/>" + " <title> " + path + "</title>" + " </head>");
+            writer.println("<body>");
+            writer.println("<table>");
+            String line = bufferedReader.readLine();// прочитали строку
+
+            boolean isInQuotes = false;
+            boolean isLineTransfer = false;
+            boolean isDoubleQuotes = false;
+            while (line != null) {
+                if (!isLineTransfer) {
+                    writer.print("<tr>");
+                    writer.print("<td>");
+                }
+                for (int i = 0; i < line.length(); i++) {
+                    if (isInQuotes) { // если мы в кавычках
+                        if (line.charAt(i) == '\"') { // и встретилась кавычка...
+                            if (i == line.length() - 1) { // .. в конце строки
+                                if (line.charAt(i) == line.charAt(i - 1)) {// узнаем двойная ли она
+                                    writer.print(line.charAt(i)); // тогда ппечатаем одну кавычку
+                                    isLineTransfer = true;
+                                    writer.print("<br/>"); // то у нас несколько строк в ячейке
+                                } else { // если нет, то закрываем кавычки
+                                    isInQuotes = false; // тогда закрываем кавычку
+                                    isLineTransfer = false;
+                                    writer.print("</td>");// закрываем ячейку
                                 }
-                                substring = line.substring(startCell, endCell);
-                                substring = substring.replace("\"\"", "\"");
-                                writer.println(substring);
-                                writer.println("<br/>");
-                                isTransfer = true;
-                            } else { // если кавчка есть, то надо проверить двойная она или нет
-                                if (quote == line.length() - 1) { // кавычка в конце строки
-                                    isInQuotes = false;
-                                    endCell = quote; // index = ine.length() - 1 значит полезет в цикл еще раз
-                                    if (!isTransfer) {
-                                        writer.println("<td>");
-                                    }
-                                    substring = line.substring(startCell, endCell);
-                                    substring = substring.replace("\"\"", "\"");
-                                    writer.println(substring);
-                                    writer.println("</td>");
-                                    writer.println("</tr>");
-                                    isTransfer = false;
+                            } else { // ... в середине
+                                if (isDoubleQuotes) { // она двойная?
+                                    writer.print(line.charAt(i));// напечатаем одну кавычку
+                                    isDoubleQuotes = false;
                                 } else {
-                                    if (line.charAt(quote) != line.charAt(quote + 1)) {// одинарная кавычка - закрываем по ней
-                                        endCell = quote;
-                                        if (!isTransfer) {
-                                            writer.println("<td>");
-                                        }
-                                        substring = line.substring(startCell, endCell);
-                                        substring = substring.replace("\"\"", "\"");
-                                        writer.println(substring);
-                                        writer.println("</td>");
-                                        startCell = endCell + 2;// переводим каретку через кавычку и запятую за ней
-                                        cursor = startCell;
-                                        isInQuotes = false;
-                                        isTransfer = false;
-                                    } else {
-                                        cursor = quote;
-                                        cursor += 2;
+                                    if (line.charAt(i) == line.charAt(i + 1)) {// узнаем двойная ли она
+                                        isDoubleQuotes = true;
+                                    } else { // если нет, то закрываем кавычки
+                                        isInQuotes = false; // тогда закрываем кавычку
+                                        isLineTransfer = false;
                                     }
                                 }
                             }
-                        } else {// если мы вне кавычек, то
-                            int comma = line.indexOf(",", startCell); // ищем запятые
-                            if (comma == -1) { // если запятых нет, то ищем кавычки
-                                if (quote == -1) {// если и их нет, то это конец строки
-                                    endCell = line.length();
-                                    writer.println("<td>");
-                                    substring = line.substring(startCell, endCell);
-                                    writer.println(substring);
-                                    writer.println("</td>");
-                                    writer.println("</tr>");
-                                } else {// первая идет кавчка
-                                    startCell = quote + 1; // перешагиваем через нее
-                                    cursor = startCell;
-                                    isInQuotes = true;// открываем кавычки
-                                }
-                            } else { // если запятые есть
-                                if (quote == -1) { // а кавыче нет..
-                                    endCell = comma; // то делим по запятым
-                                    writer.println("<td>");
-                                    substring = line.substring(startCell, endCell);
-                                    writer.println(substring);
-                                    writer.println("</td>");
-                                    startCell = endCell + 1; // перевели каретку через запятую
-                                } else { // если и кавычки есть, то вопрос, что раньше
-                                    if (comma < quote) { // первая идет запятая
-                                        endCell = comma; // то делим по запятым
-                                        writer.println("<td>");
-                                        substring = line.substring(startCell, endCell);
-                                        writer.println(substring);
-                                        writer.println("</td>");
-                                        startCell = endCell + 1; // перевели каретку через запятую
-                                        cursor = startCell;
-                                    } else { // первая идет кавчка
-                                        startCell = quote + 1;
-                                        cursor = startCell;
-                                        isInQuotes = true;// открываем кавычки
-                                    }
+                        } else { // кавычка не встретилась
+                            writer.print(line.charAt(i)); // просто печатаем символ
+                            if (i == line.length() - 1) { // как дошли до конца строки
+                                isLineTransfer = true;
+                                writer.print("<br/>"); // то у нас несколько строк в ячейке
+                            }
+                        }
+                    } else { // если мы вне кавычек
+                        if (line.charAt(i) == '\"') {// и встретилась кавычка
+                            isInQuotes = true; // открываем кавычки
+                        } else {
+                            if (line.charAt(i) == ',') { // и встретилась запятая
+                                writer.print("</td><td>");
+                            } else { // ничего интересного
+                                writer.print(line.charAt(i)); // просто печатаем символ
+                                if (i == line.length() - 1) { // и дошли до конца строки
+                                    writer.print("</td>");// закрываем ячейку
                                 }
                             }
                         }
                     }
-                    line = bufferedReader.readLine();
                 }
-                if (!isTransfer) {
+                if (!isLineTransfer) {
                     writer.println("</tr>");
                 }
-                writer.printf("</table>");
-                writer.close();
+                line = bufferedReader.readLine();
             }
+            writer.println("</table>");
+            writer.println("</body>");
+            writer.println("</html>");
         }
     }
-
 }
 
