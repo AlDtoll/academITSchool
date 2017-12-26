@@ -7,9 +7,9 @@ public class MyCSV {
 
         System.out.println("CSV");
 
-        System.out.println("Введите название файла");
+        System.out.println("Введите название файла: ");
         Scanner in = new Scanner(System.in);
-        String path = "CSV_test";//in.nextLine();
+        String path = in.nextLine();
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path + ".txt"));
              PrintWriter writer = new PrintWriter(path + ".html")) {
