@@ -1,5 +1,6 @@
+package ru.academits.tolmachev.csv.main;
+
 import java.io.*;
-import java.util.Scanner;
 
 public class MyCSV {
 
@@ -7,16 +8,15 @@ public class MyCSV {
 
         System.out.println("CSV");
 
-        System.out.println("Введите название файла: ");
-        Scanner in = new Scanner(System.in);
-        String path = in.nextLine();
+        System.out.println("Название входного файла: " + args[0]);
+        System.out.println("Название выходного файла: " + args[1]);
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path + ".txt"));
-             PrintWriter writer = new PrintWriter(path + ".html")) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]));
+             PrintWriter writer = new PrintWriter(args[1])) {
             // Формирование шляпы
             writer.println("<!DOCTYPE html>");
             writer.println("<html>");
-            writer.println("<meta charset=\"utf-8\"/>" + " <title> " + path + "</title>" + " </head>");
+            writer.println("<head> <meta charset=\"utf-8\"/> <title> " + args[1].replace(".html", "") + "</title> </head>");
             writer.println("<body>");
             writer.println("<table>");
             String line = bufferedReader.readLine();// прочитали строку
@@ -33,7 +33,7 @@ public class MyCSV {
                     if (isInQuotes) { // если мы в кавычках
                         if (line.charAt(i) == '\"') { // и встретилась кавычка...
                             if (i == line.length() - 1) { // .. в конце строки
-                                if (line.charAt(i) == line.charAt(i - 1)) {// узнаем двойная ли она
+                                if (isDoubleQuotes) {// узнаем двойная ли она
                                     writer.print(line.charAt(i)); // тогда ппечатаем одну кавычку
                                     isLineTransfer = true;
                                     writer.print("<br/>"); // то у нас несколько строк в ячейке
@@ -56,7 +56,7 @@ public class MyCSV {
                                 }
                             }
                         } else { // кавычка не встретилась
-                            writer.print(line.charAt(i)); // просто печатаем символ
+                            printSymbol(writer, line, i);// печатаем символ
                             if (i == line.length() - 1) { // как дошли до конца строки
                                 isLineTransfer = true;
                                 writer.print("<br/>"); // то у нас несколько строк в ячейке
@@ -66,10 +66,14 @@ public class MyCSV {
                         if (line.charAt(i) == '\"') {// и встретилась кавычка
                             isInQuotes = true; // открываем кавычки
                         } else {
-                            if (line.charAt(i) == ',') { // и встретилась запятая
-                                writer.print("</td><td>");
+                            if (line.charAt(i) == ',') { // и встретилась запятая...
+                                if (i == line.length() - 1) { // .. в конце строки
+                                    writer.print("</td><td></td>");
+                                } else {// ..в середине строки
+                                    writer.print("</td><td>");
+                                }
                             } else { // ничего интересного
-                                writer.print(line.charAt(i)); // просто печатаем символ
+                                printSymbol(writer, line, i);// печатаем символ
                                 if (i == line.length() - 1) { // и дошли до конца строки
                                     writer.print("</td>");// закрываем ячейку
                                 }
@@ -85,6 +89,22 @@ public class MyCSV {
             writer.println("</table>");
             writer.println("</body>");
             writer.println("</html>");
+        }
+    }
+
+    static private void printSymbol(PrintWriter writer, String line, int i) {
+        switch (line.charAt(i)) {
+            case '<':
+                writer.print("&lt");
+                break;
+            case '>':
+                writer.print("&gt");
+                break;
+            case '&':
+                writer.print("&amp");
+                break;
+            default:
+                writer.print(line.charAt(i));
         }
     }
 }
