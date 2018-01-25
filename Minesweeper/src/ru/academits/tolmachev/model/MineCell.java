@@ -12,6 +12,7 @@ public class MineCell {
 
     public void setBomb() {
         isBomb = true;
+        info = 9;
     }
 
     public void markCell() {

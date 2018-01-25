@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="academITSchool:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/academITSchool_jar</output-path>
+    <root id="archive" name="academITSchool.jar">
+      <element id="module-output" name="Matrix" />
+      <element id="module-output" name="MyCSV" />
+      <element id="module-output" name="MyList" />
+      <element id="module-output" name="Minesweeper" />
+      <element id="module-output" name="MyArrayList" />
+      <element id="module-output" name="MyHashTable" />
+      <element id="module-output" name="List" />
+      <element id="module-output" name="Lambda" />
+      <element id="module-output" name="Temp" />
+      <element id="module-output" name="Tree" />
+      <element id="module-output" name="Shapes" />
+      <element id="module-output" name="Range" />
+      <element id="module-output" name="Vector" />
+      <element id="module-output" name="TransferTemperaure" />
+      <element id="module-output" name="Sort" />
+    </root>
+  </artifact>
+</component>

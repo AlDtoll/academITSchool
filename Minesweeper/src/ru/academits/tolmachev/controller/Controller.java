@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 
 public class Controller implements ViewListener {
     private final View view;
-    private final MineBoard mineBoard;
+    private MineBoard mineBoard;
 
     public Controller(MineBoard mineBoard, View view) {
         this.mineBoard = mineBoard;
@@ -18,10 +18,13 @@ public class Controller implements ViewListener {
 
     @Override
     public void needChangeCell(int row, int col, MouseEvent mouseEvent) {
-        view.changeCell(row, col, mineBoard.changeCell(row, col, mouseEvent));
+        view.changeCell(mineBoard.changeCell(row, col, mouseEvent));
+
     }
 
-    public void setBoard(){
-        view.setBoard(mineBoard.getRows(),mineBoard.getCols());
+    public void setBoard() {
+        mineBoard = new MineBoard(9,9);
+        view.setBoard(mineBoard.getRows(), mineBoard.getCols());
     }
+
 }
