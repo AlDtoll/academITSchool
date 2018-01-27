@@ -2,8 +2,8 @@ package ru.academits.tolmachev.model;
 
 import ru.academits.tolmachev.common.ResultOfPress;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MineBoard {
 
@@ -29,7 +29,7 @@ public class MineBoard {
                 cells[i][j] = new MineCell();
             }
         }
-        setMine();
+        setMines();
     }
 
     public int getRows() {
@@ -50,15 +50,15 @@ public class MineBoard {
         }
     }
 
-    public void setMine() {
+    public void setMines() {
         int numberOfMine = 10;
         int capacity = 0;
         int[][] array = new int[cells.length][cells[0].length];
         while (capacity < numberOfMine) {// пока не будет нужное число бомб, заново заполняем поле
             for (int i = 0; i < array.length; i++) {
                 for (int j = 0; j < array[0].length; j++) {
-
-                    array[i][j] = (int) Math.round(Math.random() * 100);
+                    final Random random = new Random();
+                    array[i][j] = random.nextInt(100);
                     if (array[i][j] < numberOfMine * 100 / array.length / array[0].length && capacity < numberOfMine) {
                         cells[i][j].setBomb();
                         capacity += 1;
@@ -66,12 +66,11 @@ public class MineBoard {
                 }
             }
         }
-
         // Заполняем информацию
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[0].length; j++) {
                 if (!cells[i][j].isBomb) {
-                    setInfo(i, j);
+                    setHint(i, j);
                 }
             }
         }
@@ -79,82 +78,71 @@ public class MineBoard {
         createBombMap();
     }
 
-    private void setInfo(int i, int j) {
-        int info = 0;
-        if (i > 0 && j > 0 && cells[i - 1][j - 1].isBomb) {
-            info += 1;
+    private void setHint(int i, int j) {
+        int hint = 0;
+        int i0 = i == 0 ? 1 : 0;
+        int j0 = j == 0 ? 1 : 0;
+        int iN = i == cells.length - 1 ? 1 : 0;
+        int jN = j == cells[0].length - 1 ? 1 : 0;
+        for (int y = i - 1 + i0; y <= i + 1 - iN; y++) {
+            for (int x = j - 1 + j0; x <= j + 1 - jN; x++) {
+                if (cells[y][x].isBomb) {
+                    hint += 1;
+                }
+            }
         }
-        if (i > 0 && cells[i - 1][j].isBomb) {
-            info += 1;
-        }
-        if (i > 0 && j < cells[0].length - 1 && cells[i - 1][j + 1].isBomb) {
-            info += 1;
-        }
-        if (j > 0 && cells[i][j - 1].isBomb) {
-            info += 1;
-        }
-        if (j < cells[0].length - 1 && cells[i][j + 1].isBomb) {
-            info += 1;
-        }
-        if (i < cells.length - 1 && j > 0 && cells[i + 1][j - 1].isBomb) {
-            info += 1;
-        }
-        if (i < cells.length - 1 && cells[i + 1][j].isBomb) {
-            info += 1;
-        }
-        if (i < cells.length - 1 && j < cells[0].length - 1 && cells[i + 1][j + 1].isBomb) {
-            info += 1;
-        }
-        cells[i][j].info = info;
+        cells[i][j].hint = hint;
     }
 
     private void pressEmpty(int i, int j, ArrayList<ResultOfPress> resultOfPresses) {
-        if (i > 0 && cells[i - 1][j].info == 0 && !cells[i - 1][j].isPressed) {
-            cells[i - 1][j].pressCell();
-            resultOfPresses.add(new ResultOfPress(i - 1, j, EMPTY));
-            pressEmpty(i - 1, j, resultOfPresses);
-        }
-        if (j > 0 && cells[i][j - 1].info == 0 && !cells[i][j - 1].isPressed) {
-            cells[i][j - 1].pressCell();
-            resultOfPresses.add(new ResultOfPress(i, j - 1, EMPTY));
-            pressEmpty(i, j - 1, resultOfPresses);
-        }
-        if (j < cells[0].length - 1 && cells[i][j + 1].info == 0 && !cells[i][j + 1].isPressed) {
-            cells[i][j + 1].pressCell();
-            resultOfPresses.add(new ResultOfPress(i, j + 1, EMPTY));
-            pressEmpty(i, j + 1, resultOfPresses);
-        }
-        if (i < cells.length - 1 && cells[i + 1][j].info == 0 && !cells[i + 1][j].isPressed) {
-            cells[i + 1][j].pressCell();
-            resultOfPresses.add(new ResultOfPress(i + 1, j, EMPTY));
-            pressEmpty(i + 1, j, resultOfPresses);
+        ArrayList<ResultOfPress> stack = new ArrayList<>();
+        // Положили в очередь выбраную ячейку
+        stack.add(new ResultOfPress(i, j, EMPTY));
+        while (stack.size() != 0) {
+            // Достали элемент
+            ResultOfPress last = stack.remove(stack.size() - 1);
+            // Сделали работку
+            resultOfPresses.add(last);
+            // Положили соседей
+            int i0 = last.y == 0 ? 1 : 0;
+            int j0 = last.x == 0 ? 1 : 0;
+            int iN = last.y == cells.length - 1 ? 1 : 0;
+            int jN = last.x == cells[0].length - 1 ? 1 : 0;
+            for (int y = last.y - 1 + i0; y <= last.y + 1 - iN; y++) {
+                for (int x = last.x - 1 + j0; x <= last.x + 1 - jN; x++) {
+                    if (last.command == EMPTY && !cells[y][x].isPressed) {
+                        cells[y][x].pressCell();
+                        stack.add(new ResultOfPress(y, x, cells[y][x].hint));
+                    }
+                }
+            }
         }
     }
 
-    public ArrayList<ResultOfPress> changeCell(int row, int col, MouseEvent mouseEvent) {
+    public ArrayList<ResultOfPress> markCell(int row, int col) {
         ArrayList<ResultOfPress> resultOfPresses = new ArrayList<>();
-        if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
-            cells[row][col].markCell();
-            if (cells[row][col].isMarked) {
-                resultOfPresses.add(new ResultOfPress(row, col, FLAG));
-            } else {
-                resultOfPresses.add(new ResultOfPress(row, col, DEFAULT));
-            }
-            return resultOfPresses;
+        cells[row][col].markCell();
+        if (cells[row][col].isMarked) {
+            resultOfPresses.add(new ResultOfPress(row, col, FLAG));
+        } else {
+            resultOfPresses.add(new ResultOfPress(row, col, DEFAULT));
         }
-        if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-            cells[row][col].pressCell();
-            if (cells[row][col].isMarked) {
-                resultOfPresses.add(new ResultOfPress(row, col, FLAG));
-            } else if (cells[row][col].isBomb) {
-                resultOfPresses.addAll(bombMap);
-                resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));
-            } else if (cells[row][col].info == 0) {
-                resultOfPresses.add(new ResultOfPress(row, col, EMPTY));
-                pressEmpty(row, col, resultOfPresses);
-            } else {
-                resultOfPresses.add(new ResultOfPress(row, col, cells[row][col].info));
-            }
+        return resultOfPresses;
+    }
+
+    public ArrayList<ResultOfPress> changeCell(int row, int col) {
+        ArrayList<ResultOfPress> resultOfPresses = new ArrayList<>();
+        cells[row][col].pressCell();
+        if (cells[row][col].isMarked) {
+            resultOfPresses.add(new ResultOfPress(row, col, FLAG));
+        } else if (cells[row][col].isBomb) {
+            resultOfPresses.addAll(bombMap);
+            resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));
+        } else if (cells[row][col].hint == 0) {
+//            resultOfPresses.add(new ResultOfPress(row, col, EMPTY));
+            pressEmpty(row, col, resultOfPresses);
+        } else {
+            resultOfPresses.add(new ResultOfPress(row, col, cells[row][col].hint));
         }
         return resultOfPresses;
     }

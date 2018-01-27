@@ -6,13 +6,8 @@ import ru.academits.tolmachev.common.ViewListener;
 import ru.academits.tolmachev.model.MineBoard;
 
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class FrameView implements View {
@@ -85,8 +80,6 @@ public class FrameView implements View {
         });
 
 
-
-
         JMenu edit = new JMenu("Edit");
         JMenu highScores = new JMenu("High  Scores");
         JMenu exit = new JMenu("Exit");
@@ -97,9 +90,6 @@ public class FrameView implements View {
         menuBar.add(highScores);
         menuBar.add(exit);
         menuBar.add(about);
-
-
-
 
 
         for (ViewListener listener : listeners) {
@@ -117,37 +107,25 @@ public class FrameView implements View {
             for (int j = 0; j < cols; j++) {
                 int finalJ = j;
                 int finalI = i;
-                buttons[finalI][finalJ].addMouseListener(new MouseListener() {
+                buttons[finalI][finalJ].addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
+                    public void mouseReleased(MouseEvent e) {
+                        super.mouseReleased(e);
                         int centerX = mineField.getSize().width / cols / 2;
                         int centerY = mineField.getSize().height / rows / 2;
                         int x = buttons[finalI][finalJ].getX() / centerX / 2;
                         int y = buttons[finalI][finalJ].getY() / centerY / 2;
 //                        JOptionPane.showMessageDialog(frame, "row: " + x + " col: " + y);
-                        for (ViewListener listener : listeners) {
-                            listener.needChangeCell(y, x, e);
+                        if (e.getButton() == MouseEvent.BUTTON3) {
+                            for (ViewListener listener : listeners) {
+                                listener.needMarkCell(y, x);
+                            }
                         }
-                    }
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            for (ViewListener listener : listeners) {
+                                listener.needOpenCell(y, x);
+                            }
+                        }
                     }
                 });
             }

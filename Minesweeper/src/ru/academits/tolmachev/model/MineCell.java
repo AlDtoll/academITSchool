@@ -5,14 +5,14 @@ public class MineCell {
     public boolean isMarked = false;
     public boolean isPressed = false;
     public boolean isBomb = false;
-    public int info = 0;
+    public int hint = 0;
 
     public MineCell() {
     }
 
     public void setBomb() {
         isBomb = true;
-        info = 9;
+        hint = 9;
     }
 
     public void markCell() {

@@ -4,7 +4,9 @@ import java.awt.event.MouseEvent;
 
 public interface ViewListener {
     // пользователь щелкнул по кнопке
-    void needChangeCell(int row, int col, MouseEvent mouseEvent);
+    void needOpenCell(int row, int col);
+
+    void needMarkCell(int row, int col);
 
     void setBoard();
 
