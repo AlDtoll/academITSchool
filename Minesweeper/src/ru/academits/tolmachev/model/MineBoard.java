@@ -8,8 +8,13 @@ import java.util.Random;
 public class MineBoard {
 
     private MineCell[][] cells;
-    //    private int rows;
-//    private int cols;
+    private int mines = 10;
+    private boolean isActive = true;
+    //    private int numberOfMine = 10;
+    private int markedBomb = 0;
+    //    private int rows = 9;
+//    private int cols = 9;
+    public static final int WIN = 111;
     public static final int EXPLOSION = 12;
     public static final int FLAG = 11;
     public static final int BOMB = 10;
@@ -19,16 +24,16 @@ public class MineBoard {
     private final ArrayList<ResultOfPress> bombMap = new ArrayList<>();
 
     public MineBoard() {
-
     }
 
-    public MineBoard(int rows, int cols) {
+    public MineBoard(int rows, int cols, int mines) {
         this.cells = new MineCell[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 cells[i][j] = new MineCell();
             }
         }
+        this.mines = mines;
         setMines();
     }
 
@@ -38,6 +43,10 @@ public class MineBoard {
 
     public int getCols() {
         return cells[0].length;
+    }
+
+    public int getMines() {
+        return mines;
     }
 
     private void createBombMap() {
@@ -50,16 +59,19 @@ public class MineBoard {
         }
     }
 
-    public void setMines() {
-        int numberOfMine = 10;
+    public void deactivateBoard() {
+        isActive = false;
+    }
+
+    private void setMines() {
         int capacity = 0;
         int[][] array = new int[cells.length][cells[0].length];
-        while (capacity < numberOfMine) {// пока не будет нужное число бомб, заново заполняем поле
+        while (capacity < mines) {// пока не будет нужное число бомб, заново заполняем поле
             for (int i = 0; i < array.length; i++) {
                 for (int j = 0; j < array[0].length; j++) {
                     final Random random = new Random();
                     array[i][j] = random.nextInt(100);
-                    if (array[i][j] < numberOfMine * 100 / array.length / array[0].length && capacity < numberOfMine) {
+                    if (array[i][j] < mines * 100 / array.length / array[0].length && capacity < mines) {
                         cells[i][j].setBomb();
                         capacity += 1;
                     }
@@ -121,7 +133,11 @@ public class MineBoard {
 
     public ArrayList<ResultOfPress> markCell(int row, int col) {
         ArrayList<ResultOfPress> resultOfPresses = new ArrayList<>();
+        if (!isActive) {
+            return resultOfPresses;
+        }
         cells[row][col].markCell();
+        tryWin(resultOfPresses);
         if (cells[row][col].isMarked) {
             resultOfPresses.add(new ResultOfPress(row, col, FLAG));
         } else {
@@ -132,18 +148,43 @@ public class MineBoard {
 
     public ArrayList<ResultOfPress> changeCell(int row, int col) {
         ArrayList<ResultOfPress> resultOfPresses = new ArrayList<>();
+        if (!isActive) {
+            return resultOfPresses;
+        }
         cells[row][col].pressCell();
+        tryWin(resultOfPresses);
         if (cells[row][col].isMarked) {
             resultOfPresses.add(new ResultOfPress(row, col, FLAG));
         } else if (cells[row][col].isBomb) {
             resultOfPresses.addAll(bombMap);
             resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));
         } else if (cells[row][col].hint == 0) {
-//            resultOfPresses.add(new ResultOfPress(row, col, EMPTY));
             pressEmpty(row, col, resultOfPresses);
         } else {
             resultOfPresses.add(new ResultOfPress(row, col, cells[row][col].hint));
         }
         return resultOfPresses;
+    }
+
+    private void tryWin(ArrayList<ResultOfPress> resultOfPresses) {
+        markedBomb = 0;
+        for (MineCell[] cell : cells) {
+            for (int j = 0; j < cells[0].length; j++) {
+                if (cell[j].isBomb && cell[j].isMarked) {
+                    markedBomb++;
+                }
+                if (markedBomb == bombMap.size()) {
+                    resultOfPresses.add(new ResultOfPress(0, 0, WIN));
+                }
+            }
+        }
+    }
+
+    public ArrayList<ResultOfPress> getBombMap() {
+        return bombMap;
+    }
+
+    public int getMarkedBomb() {
+        return markedBomb;
     }
 }

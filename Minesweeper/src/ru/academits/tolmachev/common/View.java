@@ -2,7 +2,7 @@ package ru.academits.tolmachev.common;
 
 import java.util.ArrayList;
 
-public interface View extends AutoCloseable {
+public interface View{
 
     void startApplication();
 
@@ -10,10 +10,9 @@ public interface View extends AutoCloseable {
 
     void changeCell(ArrayList<ResultOfPress> arrayList);
 
-    void setBoard(int rows, int cols);
+    void setBoard(int rows, int cols, int mines);
 
-//    void showEmpty(int[] y, int [] x, int command);
-//
-//    void removeViewListener(ViewListener listener);
-//
+    void showBomb(ArrayList<ResultOfPress> bombMap);
+
+    void showScore(String[] table);
 }

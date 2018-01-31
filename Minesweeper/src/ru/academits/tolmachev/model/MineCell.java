@@ -1,28 +1,28 @@
 package ru.academits.tolmachev.model;
 
-public class MineCell {
+class MineCell {
 
-    public boolean isMarked = false;
-    public boolean isPressed = false;
-    public boolean isBomb = false;
-    public int hint = 0;
+    boolean isMarked = false;
+    boolean isPressed = false;
+    boolean isBomb = false;
+    int hint = 0;
 
-    public MineCell() {
+    MineCell() {
     }
 
-    public void setBomb() {
+    void setBomb() {
         isBomb = true;
         hint = 9;
     }
 
-    public void markCell() {
+    void markCell() {
         if (!isPressed) {
             isMarked = !isMarked;
         }
     }
 
-    public void pressCell() {
-        if (!isMarked) {
+    void pressCell() {
+        if (!isMarked || !isPressed) {
             isPressed = true;
         }
     }
