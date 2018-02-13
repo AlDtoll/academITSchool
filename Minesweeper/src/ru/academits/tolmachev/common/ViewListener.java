@@ -17,6 +17,9 @@ public interface ViewListener {
 
     void carveName(String name);
 
+    void changeFlagCounter();
+
+    void changeTimeCounter();
 
 }
 

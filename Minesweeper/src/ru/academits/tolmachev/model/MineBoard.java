@@ -10,11 +10,13 @@ public class MineBoard {
     private MineCell[][] cells;
     private int mines = 10;
     private boolean isActive = true;
-    //    private int numberOfMine = 10;
+    private boolean isFirstClick = true;
     private int markedBomb = 0;
-    //    private int rows = 9;
-//    private int cols = 9;
+    private int flags = mines;
+
+    // TODO сделать command enum'ом
     public static final int WIN = 111;
+    public static final int QUESTION = 13;
     public static final int EXPLOSION = 12;
     public static final int FLAG = 11;
     public static final int BOMB = 10;
@@ -50,6 +52,7 @@ public class MineBoard {
     }
 
     private void createBombMap() {
+        bombMap.clear();
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[0].length; j++) {
                 if (cells[i][j].isBomb) {
@@ -69,6 +72,7 @@ public class MineBoard {
         while (capacity < mines) {// пока не будет нужное число бомб, заново заполняем поле
             for (int i = 0; i < array.length; i++) {
                 for (int j = 0; j < array[0].length; j++) {
+//                    cells[i][j].isBomb = false;
                     final Random random = new Random();
                     array[i][j] = random.nextInt(100);
                     if (array[i][j] < mines * 100 / array.length / array[0].length && capacity < mines) {
@@ -122,7 +126,7 @@ public class MineBoard {
             int jN = last.x == cells[0].length - 1 ? 1 : 0;
             for (int y = last.y - 1 + i0; y <= last.y + 1 - iN; y++) {
                 for (int x = last.x - 1 + j0; x <= last.x + 1 - jN; x++) {
-                    if (last.command == EMPTY && !cells[y][x].isPressed) {
+                    if (last.command == EMPTY && !cells[y][x].isPressed && !cells[y][x].isMarked) {
                         cells[y][x].pressCell();
                         stack.add(new ResultOfPress(y, x, cells[y][x].hint));
                     }
@@ -138,10 +142,15 @@ public class MineBoard {
         }
         cells[row][col].markCell();
         tryWin(resultOfPresses);
-        if (cells[row][col].isMarked) {
+        if (cells[row][col].isFlag) {
             resultOfPresses.add(new ResultOfPress(row, col, FLAG));
+            flags--;
+        } else if (cells[row][col].isMarked) {
+            resultOfPresses.add(new ResultOfPress(row, col, QUESTION));
+            flags--;
         } else {
             resultOfPresses.add(new ResultOfPress(row, col, DEFAULT));
+            flags++;
         }
         return resultOfPresses;
     }
@@ -153,27 +162,42 @@ public class MineBoard {
         }
         cells[row][col].pressCell();
         tryWin(resultOfPresses);
-        if (cells[row][col].isMarked) {
+        if (cells[row][col].isFlag) {
             resultOfPresses.add(new ResultOfPress(row, col, FLAG));
+        } else if (cells[row][col].isMarked) {
+            resultOfPresses.add(new ResultOfPress(row, col, QUESTION));
         } else if (cells[row][col].isBomb) {
+            // TODO сделав первый клик беспроигрышным получил баг - не всегда верное количество бомб
+//            if (isFirstClick) {
+//                do {
+//                    setMines();
+//                }
+//                while (cells[row][col].isBomb);
+//            } else {
             resultOfPresses.addAll(bombMap);
             resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));
+//            }
         } else if (cells[row][col].hint == 0) {
             pressEmpty(row, col, resultOfPresses);
         } else {
             resultOfPresses.add(new ResultOfPress(row, col, cells[row][col].hint));
         }
+        isFirstClick = false;
         return resultOfPresses;
     }
 
     private void tryWin(ArrayList<ResultOfPress> resultOfPresses) {
         markedBomb = 0;
+        int pressedCells = 0;
         for (MineCell[] cell : cells) {
             for (int j = 0; j < cells[0].length; j++) {
-                if (cell[j].isBomb && cell[j].isMarked) {
+                if (cell[j].isBomb && cell[j].isFlag) {
                     markedBomb++;
                 }
-                if (markedBomb == bombMap.size()) {
+                if (cell[j].isPressed) {
+                    pressedCells++;
+                }
+                if (markedBomb == bombMap.size() && pressedCells == cells.length * cells[0].length - bombMap.size()) {
                     resultOfPresses.add(new ResultOfPress(0, 0, WIN));
                 }
             }
@@ -186,5 +210,9 @@ public class MineBoard {
 
     public int getMarkedBomb() {
         return markedBomb;
+    }
+
+    public int getFlags() {
+        return flags;
     }
 }

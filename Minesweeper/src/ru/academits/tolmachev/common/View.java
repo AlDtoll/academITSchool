@@ -15,4 +15,8 @@ public interface View{
     void showBomb(ArrayList<ResultOfPress> bombMap);
 
     void showScore(String[] table);
+
+    void changeFlagCounter(int flags);
+
+    void changeTimeCounter(int seconds);
 }
