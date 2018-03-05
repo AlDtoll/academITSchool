@@ -36,6 +36,7 @@ public class MineBoard {
             }
         }
         this.mines = mines;
+        this.flags = mines;
         setMines();
     }
 
@@ -66,13 +67,21 @@ public class MineBoard {
         isActive = false;
     }
 
+    private void clearBoard() {
+        for (MineCell[] cell : cells) {
+            for (int j = 0; j < cells[0].length; j++) {
+                cell[j].isBomb = false;
+                cell[j].hint = 0;
+            }
+        }
+    }
+
     private void setMines() {
         int capacity = 0;
         int[][] array = new int[cells.length][cells[0].length];
         while (capacity < mines) {// пока не будет нужное число бомб, заново заполняем поле
             for (int i = 0; i < array.length; i++) {
                 for (int j = 0; j < array[0].length; j++) {
-//                    cells[i][j].isBomb = false;
                     final Random random = new Random();
                     array[i][j] = random.nextInt(100);
                     if (array[i][j] < mines * 100 / array.length / array[0].length && capacity < mines) {
@@ -147,11 +156,11 @@ public class MineBoard {
             flags--;
         } else if (cells[row][col].isMarked) {
             resultOfPresses.add(new ResultOfPress(row, col, QUESTION));
-            flags--;
+            flags++;
         } else {
             resultOfPresses.add(new ResultOfPress(row, col, DEFAULT));
-            flags++;
         }
+        isFirstClick = false;
         return resultOfPresses;
     }
 
@@ -167,16 +176,20 @@ public class MineBoard {
         } else if (cells[row][col].isMarked) {
             resultOfPresses.add(new ResultOfPress(row, col, QUESTION));
         } else if (cells[row][col].isBomb) {
-            // TODO сделав первый клик беспроигрышным получил баг - не всегда верное количество бомб
-//            if (isFirstClick) {
-//                do {
-//                    setMines();
-//                }
-//                while (cells[row][col].isBomb);
-//            } else {
-            resultOfPresses.addAll(bombMap);
-            resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));
-//            }
+            if (isFirstClick) {
+                do {
+                    clearBoard();
+                    setMines();
+
+                }
+                while (cells[row][col].isBomb);
+                // TODO чтобы ячейка сразу открывалась
+//                isFirstClick = false;
+//                changeCell(row,col);
+            } else {
+                resultOfPresses.addAll(bombMap);
+                resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));
+            }
         } else if (cells[row][col].hint == 0) {
             pressEmpty(row, col, resultOfPresses);
         } else {

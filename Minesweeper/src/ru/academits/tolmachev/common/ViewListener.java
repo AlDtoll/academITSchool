@@ -21,5 +21,8 @@ public interface ViewListener {
 
     void changeTimeCounter();
 
+    void startTimer(boolean enable);
+
+    void resetTimer();
 }
 

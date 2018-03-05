@@ -22,13 +22,16 @@ public class FrameView implements View {
     private JPanel mineField = new JPanel();
     private JButton[][] buttons;
     private JLabel timer = new JLabel();
+    private boolean isActive = true;
 
     private final static int HORIZONTAL_INSET = 5;
     private final static int VERTICAL_INSET = 5;
+    private final static int SIZE_OF_CELL = 45;
+    private final static int MAX_SIZE_OF_BOARD = 20;
 
 
     private void initFrame() {
-        int sizeOfCell = 47;
+        int sizeOfCell = SIZE_OF_CELL + 2;
         int sizeOfMenuBar = 30;
         int sizeOfCounters = 30;
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -54,7 +57,6 @@ public class FrameView implements View {
         c3.weightx = 0.5;
         c3.anchor = GridBagConstraints.CENTER;
         c3.insets = insets;
-
         counter.setText("FLAGS:" + mines);
         contentPanel.add(counter, c3);
 
@@ -67,8 +69,7 @@ public class FrameView implements View {
         c2.weighty = 0.1;
         c2.weightx = 0.5;
         c2.insets = insets;
-
-        timer.setText("TIME:" + 0);
+        timer.setText("TIME: 00:00");
         contentPanel.add(timer, c2);
 
         GridBagConstraints c1 = new GridBagConstraints();
@@ -76,40 +77,48 @@ public class FrameView implements View {
         c1.gridy = 1;
         c1.gridwidth = 2;
         c1.gridheight = 2;
+        c1.anchor = GridBagConstraints.CENTER;
         c1.weighty = 1.0;
         c1.weightx = 1.0;
         c1.insets = insets;
+        c1.fill = GridBagConstraints.BOTH;
         contentPanel.add(mineField, c1);
-
 
         frame.setContentPane(contentPanel);
     }
 
     private void initField(int rows, int cols, int mines) {
+        isActive = true;
         for (ViewListener listener : listeners) {
             listener.setBoard(rows, cols, mines);
+            listener.startTimer(false);
         }
         mineField.setLayout(new GridLayout(rows, cols));
+//        mineField.setSize(new Dimension(SIZE_OF_CELL * cols, SIZE_OF_CELL * rows));
+//        mineField.setMinimumSize(new Dimension(SIZE_OF_CELL * cols, SIZE_OF_CELL * rows));
         buttons = new JButton[rows][cols];
         Font BigFontTR = new Font("TimesRoman", Font.BOLD, 17);//Тут все про шрифт)
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 buttons[i][j] = new JButton();
                 buttons[i][j].setFont(BigFontTR);
+//                buttons[i][j].setSize(new Dimension(SIZE_OF_CELL, SIZE_OF_CELL));
+//                buttons[i][j].setMinimumSize(new Dimension(SIZE_OF_CELL, SIZE_OF_CELL));
                 mineField.add(buttons[i][j]);
             }
         }
-//        frame.setContentPane(mineField);
     }
 
-    //TODO сделать меню выпадающим
     private void initMenu() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu newGame = new JMenu("New Game");
+        JMenu menu = new JMenu("Menu");
+        menuBar.add(menu);
+
+        JMenuItem newGame = new JMenuItem("New Game");
         newGame.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 Icon defaultIcon = new JButton().getIcon();
                 for (int i = 0; i < rows; i++) {
@@ -121,36 +130,79 @@ public class FrameView implements View {
                 }
                 for (ViewListener listener : listeners) {
                     listener.setBoard(rows, cols, mines);
+                    listener.resetTimer();
+                    changeFlagCounter(mines);
+                    isActive =true;
                 }
             }
         });
 
-        //TODO сделать одним окном и проверку
-        JMenu edit = new JMenu("Edit");
+        // Настройка поля
+        JMenuItem edit = new JMenuItem("Edit");
         edit.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                frame.setVisible(false);
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < cols; j++) {
-                        mineField.remove(buttons[i][j]);
-                    }
-                }
-                int rows = Integer.parseInt(JOptionPane.showInputDialog(frame, "Set rows"));
-                int cols = Integer.parseInt(JOptionPane.showInputDialog(frame, "Set cols"));
-                int mines = Integer.parseInt(JOptionPane.showInputDialog(frame, "Set mines"));
-                initField(rows, cols, mines);
-                initFrame();
-                initEvents();
-            }
+                JDialog editDialog = new JDialog(frame, true);
+                editDialog.setLocationRelativeTo(null);
+                editDialog.setSize(new Dimension(200, 200));
 
+                JPanel editPanel = new JPanel(new GridLayout(6, 1));
+                JLabel rowLabel = new JLabel("Number of rows");
+                JTextField numberOfRows = new JTextField();
+                numberOfRows.setText("9");
+                JLabel colLabel = new JLabel("Number of columns");
+                JTextField numberOfCols = new JTextField();
+                numberOfCols.setText("9");
+                JLabel mineLabel = new JLabel("Number of mines");
+                JTextField numberOfMines = new JTextField();
+                numberOfMines.setText("10");
+                editPanel.add(rowLabel);
+                editPanel.add(numberOfRows);
+                editPanel.add(colLabel);
+                editPanel.add(numberOfCols);
+                editPanel.add(mineLabel);
+                editPanel.add(numberOfMines);
+
+                numberOfRows.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                            editBoard(editDialog, numberOfRows, numberOfCols, numberOfMines);
+                        }
+                    }
+                });
+
+                numberOfCols.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                            editBoard(editDialog, numberOfRows, numberOfCols, numberOfMines);
+                        }
+                    }
+                });
+
+                numberOfMines.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                            editBoard(editDialog, numberOfRows, numberOfCols, numberOfMines);
+                        }
+                    }
+                });
+
+                editDialog.add(editPanel);
+                editDialog.setVisible(true);
+            }
         });
 
-        JMenu highScores = new JMenu("High Scores");
+        JMenuItem highScores = new JMenuItem("High Scores");
         highScores.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 for (ViewListener listener : listeners) {
                     listener.callChampions();
@@ -159,10 +211,10 @@ public class FrameView implements View {
 
         });
 
-        JMenu exit = new JMenu("Exit");
+        JMenuItem exit = new JMenuItem("Exit");
         exit.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 System.exit(0);
             }
@@ -170,7 +222,7 @@ public class FrameView implements View {
         });
 
 
-        JMenu about = new JMenu("About");
+        JMenuItem about = new JMenuItem("About");
 
         JMenu cheat = new JMenu("           ");
         cheat.addMouseListener(new MouseAdapter() {
@@ -183,16 +235,58 @@ public class FrameView implements View {
             }
         });
 
-        menuBar.add(newGame);
-        menuBar.add(edit);
-        menuBar.add(highScores);
-        menuBar.add(exit);
-        menuBar.add(about);
+        menu.add(newGame);
+        menu.add(edit);
+        menu.add(highScores);
+        menu.add(exit);
+        menu.add(about);
+
         menuBar.add(cheat);
 
         frame.setJMenuBar(menuBar);
     }
 
+    private void editBoard(JDialog editDialog, JTextField numberOfRows, JTextField numberOfCols, JTextField numberOfMines) {
+        int oldRows = rows;
+        int oldCols = cols;
+        int rows;
+        int cols;
+        int mines;
+        try {
+            rows = Integer.parseInt(numberOfRows.getText());
+            if (rows < 0 || rows > MAX_SIZE_OF_BOARD) {
+                throw new IllegalArgumentException();
+            }
+            cols = Integer.parseInt(numberOfCols.getText());
+            if (cols < 0 || cols > MAX_SIZE_OF_BOARD) {
+                throw new IllegalArgumentException();
+            }
+            mines = Integer.parseInt(numberOfMines.getText());
+            if (mines <= 0 || mines > rows * cols - 1) {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e1) {
+            JOptionPane.showMessageDialog(frame, "One or more of parameter was select wrong. Board will create with default setting");
+            rows = 9;
+            cols = 9;
+            mines = 10;
+        }
+        editDialog.setVisible(false);
+        frame.setVisible(false);
+        for (int i = 0; i < oldRows; i++) {
+            for (int j = 0; j < oldCols; j++) {
+                mineField.remove(buttons[i][j]);
+            }
+        }
+        initField(rows, cols, mines);
+        initFrame();
+        initEvents();
+        for (ViewListener listener : listeners) {
+            listener.resetTimer();
+            listener.startTimer(false);
+            changeFlagCounter(mines);
+        }
+    }
 
     private void initEvents() {
         for (int i = 0; i < rows; i++) {
@@ -203,6 +297,11 @@ public class FrameView implements View {
                     @Override
                     public void mouseReleased(MouseEvent e) {
                         super.mouseReleased(e);
+                        if (isActive) {
+                            for (ViewListener listener : listeners) {
+                                listener.startTimer(true);
+                            }
+                        }
                         int centerX = mineField.getSize().width / cols / 2;
                         int centerY = mineField.getSize().height / rows / 2;
                         int x = buttons[finalI][finalJ].getX() / centerX / 2;
@@ -220,6 +319,16 @@ public class FrameView implements View {
                             }
                         }
                     }
+                    public void mouseClicked(MouseEvent e) {
+                        super.mouseClicked(e);
+                        int centerX = mineField.getSize().width / cols / 2;
+                        int centerY = mineField.getSize().height / rows / 2;
+                        int x = buttons[finalI][finalJ].getX() / centerX / 2;
+                        int y = buttons[finalI][finalJ].getY() / centerY / 2;
+                        if (e.getButton() == MouseEvent.BUTTON3 && e.getButton() == MouseEvent.BUTTON1) {
+                            buttons[y][x].setIcon(new ImageIcon("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\explosion.png"));
+                        }
+                    }
                 });
             }
         }
@@ -230,7 +339,18 @@ public class FrameView implements View {
             initFrame();
             initContent();
             initEvents();
+            initTimer();
         });
+    }
+
+    private void initTimer() {
+        ActionListener start = e -> {
+            for (ViewListener listener : listeners) {
+                listener.changeTimeCounter();
+            }
+        };
+        Timer timer = new Timer(100, start);
+        timer.start();
     }
 
     @Override
@@ -246,7 +366,7 @@ public class FrameView implements View {
 
     @Override
     public void changeTimeCounter(int seconds) {
-        timer.setText("TIME:" + seconds);
+        timer.setText("TIME:" + String.format("%02d:%02d", seconds / 60, seconds % 60));
     }
 
     // TODO общаее имя пути убрать
@@ -269,7 +389,6 @@ public class FrameView implements View {
                     buttons[node.y][node.x].setIcon(new ImageIcon("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\explosion.png"));
                     isLoss = true;
                     break;
-                // TODO а оно здесь надо?
                 case MineBoard.BOMB:
                     buttons[node.y][node.x].setIcon(new ImageIcon("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\mine.png"));
                     break;
@@ -308,6 +427,10 @@ public class FrameView implements View {
                 buttons[i][j].setEnabled(false);
             }
         }
+        for (ViewListener listener : listeners) {
+            listener.startTimer(false);
+        }
+        isActive = false;
     }
 
     public void showBomb(ArrayList<ResultOfPress> arrayList) {
@@ -321,7 +444,6 @@ public class FrameView implements View {
             buttons[node.y][node.x].setIcon(new ImageIcon("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\mine.png"));
         }
     }
-
 
     @Override
     public void setBoard(int rows, int cols, int mines) {

@@ -58,5 +58,13 @@ public class Controller implements ViewListener {
     public void changeTimeCounter() {
         view.changeTimeCounter(timer.getTime());
     }
+
+    public void startTimer(boolean enable) {
+        timer.startTimer(enable);
+    }
+
+    public void resetTimer() {
+        timer.resetTimer();
+    }
 }
 
