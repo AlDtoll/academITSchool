@@ -72,6 +72,9 @@ public class MineBoard {
             for (int j = 0; j < cells[0].length; j++) {
                 cell[j].isBomb = false;
                 cell[j].hint = 0;
+//                cell[j].isPressed = false;
+//                cell[j].isMarked = false;
+//                cell[j].isFlag = false;
             }
         }
     }
@@ -180,12 +183,9 @@ public class MineBoard {
                 do {
                     clearBoard();
                     setMines();
-
                 }
                 while (cells[row][col].isBomb);
-                // TODO чтобы ячейка сразу открывалась
-//                isFirstClick = false;
-//                changeCell(row,col);
+                isFirstClick = false;
             } else {
                 resultOfPresses.addAll(bombMap);
                 resultOfPresses.add(new ResultOfPress(row, col, EXPLOSION));

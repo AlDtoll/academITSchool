@@ -1,41 +1,48 @@
 package ru.academits.tolmachev.model;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class ScoreTable {
+
+    private int limit = 6;
+    private String separator = "        ";
 
     public ScoreTable() {
     }
 
     public String[] callChampions() {
         String[] table = readTable();
-        if (table[0].contains("!")) {
-            return table;
+        if (table == null) {
+            return null;
         } else {
             for (int i = 0; i < table.length - 1 && table[i] != null; i++) {
-                table[i] = (i + 1) + ".   " + table[i];
+                table[i] = "    " + (i + 1) + "." + separator + table[i];
             }
             return table;
         }
     }
 
-    public void carveName(String name, int points) {
+    public void carveName(String name, int points, int seconds) {
         String[] table = readTable();
         try (PrintWriter writer = new PrintWriter("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\table.txt")) {
-            if (table[0].contains("!")) {
-                writer.println(String.valueOf(points) + "-" + name);
+            if (table == null) {
+                writer.println(String.valueOf(points) + separator + String.format("%02d:%02d", seconds / 60, seconds % 60) + "  " + name.substring(0, 5));
             } else {
                 int j = 0;
                 while (table[j] != null) {
                     j++;
                 }
-                table[j] = String.valueOf(points) + "-" + name;
-                insertionSort(table);
+                String[] newTable = new String[j + 1];
+                System.arraycopy(table, 0, newTable, 0, j);
+                newTable[j] = String.valueOf(points) + separator + String.format("%02d:%02d", seconds / 60, seconds % 60) + "  " + name.substring(0, 5);
+                insertionSort(newTable);
                 int i = 0;
-                while (table[i] != null) {
-                    writer.println(table[i]);
+                while (newTable[i] != null) {
+                    writer.println(newTable[i]);
                     i++;
-                    if (i == table.length - 1) {
+                    if (i == newTable.length || i == limit) {
                         break;
                     }
                 }
@@ -46,9 +53,12 @@ public class ScoreTable {
     }
 
     private String[] readTable() {
-        String[] table = new String[4];
+        String[] table = new String[limit];
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\table.txt"))) {
             String line = bufferedReader.readLine();
+            if (line == null) {
+                return null;
+            }
             int i = 0;
             while (line != null) {
                 table[i] = line;
@@ -58,30 +68,29 @@ public class ScoreTable {
                     break;
                 }
             }
-        } catch (FileNotFoundException e) {
-            table[0] = "Nobody is champions yet!";
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Score file isn't created");
+            return null;
         }
         return table;
     }
 
-    //TODO стандартная сортировка
-    private static void insertionSort(String[] table) {
-        for (int i = 1; i < table.length && table[i] != null; i++) {
-            String[] points = table[i].split("-");
-            String tempString = table[i];
-            int temp = Integer.parseInt(points[0]);
-            int j = i - 1;
-            for (; j >= 0; j--) {
-                String[] point = table[j].split("-");
-                if (temp > Integer.parseInt(point[0])) {
-                    table[j + 1] = table[j];
-                } else {
-                    break;
-                }
+    private void insertionSort(String[] table) {
+        ChampionsComparator championsComparator = new ChampionsComparator();
+        Arrays.sort(table, championsComparator);
+    }
+
+    class ChampionsComparator implements Comparator<String> {
+        public int compare(String challenger_1, String challenger_2) {
+            int p1 = Integer.parseInt((challenger_1.split(separator))[0]);
+            int p2 = Integer.parseInt((challenger_2.split(separator))[0]);
+            String t1 = ((challenger_1.split(separator))[1]);
+            String t2 = ((challenger_2.split(separator))[1]);
+            if (p1 == p2) {
+                return t1.compareTo(t2);
+            } else {
+                return Integer.compare(p2, p1);
             }
-            table[j + 1] = tempString;
         }
     }
 }

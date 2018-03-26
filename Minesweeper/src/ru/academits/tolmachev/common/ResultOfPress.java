@@ -11,4 +11,12 @@ public class ResultOfPress {
         this.x = x;
         this.command = command;
     }
+
+//    public Command command;
+//
+//    public ResultOfPress(int y, int x, Command command) {
+//        this.y = y;
+//        this.x = x;
+//        this.command = command;
+//    }
 }

@@ -52,7 +52,7 @@ public class Controller implements ViewListener {
     }
 
     public void carveName(String name) {
-        scoreTable.carveName(name, mineBoard.getMarkedBomb());
+        scoreTable.carveName(name, mineBoard.getMarkedBomb(), timer.getTime());
     }
 
     public void changeTimeCounter() {

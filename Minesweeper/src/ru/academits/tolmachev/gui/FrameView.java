@@ -35,7 +35,8 @@ public class FrameView implements View {
         int sizeOfMenuBar = 30;
         int sizeOfCounters = 30;
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(sizeOfCell * cols, sizeOfCell * rows + sizeOfMenuBar + sizeOfCounters));
+//        frame.setMinimumSize(new Dimension(sizeOfCell * cols, sizeOfCell * rows + sizeOfMenuBar + sizeOfCounters));
+        frame.setSize(new Dimension(sizeOfCell * cols, sizeOfCell * rows + sizeOfMenuBar + sizeOfCounters));
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -102,8 +103,9 @@ public class FrameView implements View {
             for (int j = 0; j < cols; j++) {
                 buttons[i][j] = new JButton();
                 buttons[i][j].setFont(BigFontTR);
-//                buttons[i][j].setSize(new Dimension(SIZE_OF_CELL, SIZE_OF_CELL));
+                buttons[i][j].setSize(new Dimension(SIZE_OF_CELL, SIZE_OF_CELL));
 //                buttons[i][j].setMinimumSize(new Dimension(SIZE_OF_CELL, SIZE_OF_CELL));
+//                buttons[0][0].setIcon(new ImageIcon());
                 mineField.add(buttons[i][j]);
             }
         }
@@ -132,7 +134,7 @@ public class FrameView implements View {
                     listener.setBoard(rows, cols, mines);
                     listener.resetTimer();
                     changeFlagCounter(mines);
-                    isActive =true;
+                    isActive = true;
                 }
             }
         });
@@ -294,7 +296,26 @@ public class FrameView implements View {
                 int finalJ = j;
                 int finalI = i;
                 buttons[finalI][finalJ].addMouseListener(new MouseAdapter() {
-                    @Override
+//                    @Override
+//                    public void mousePressed(MouseEvent e) {
+//                        super.mousePressed(e);
+//                        int centerX = mineField.getSize().width / cols / 2;
+//                        int centerY = mineField.getSize().height / rows / 2;
+//                        int x = buttons[finalI][finalJ].getX() / centerX / 2;
+//                        int y = buttons[finalI][finalJ].getY() / centerY / 2;
+//                        if (e.getButton() == MouseEvent.BUTTON3) {
+//                            ActionListener start = e1 -> {
+//
+//                            };
+//                            Timer timer = new Timer(100, start);
+//                            timer.start();
+//                            if (e.getButton() == MouseEvent.BUTTON1) {
+//                                buttons[y][x].setIcon(new ImageIcon("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\question.png"));
+////                                buttons[y][x].set
+//                            }
+//                        }
+//                    }
+
                     public void mouseReleased(MouseEvent e) {
                         super.mouseReleased(e);
                         if (isActive) {
@@ -319,19 +340,32 @@ public class FrameView implements View {
                             }
                         }
                     }
-                    public void mouseClicked(MouseEvent e) {
-                        super.mouseClicked(e);
-                        int centerX = mineField.getSize().width / cols / 2;
-                        int centerY = mineField.getSize().height / rows / 2;
-                        int x = buttons[finalI][finalJ].getX() / centerX / 2;
-                        int y = buttons[finalI][finalJ].getY() / centerY / 2;
-                        if (e.getButton() == MouseEvent.BUTTON3 && e.getButton() == MouseEvent.BUTTON1) {
-                            buttons[y][x].setIcon(new ImageIcon("Minesweeper\\src\\ru\\academits\\tolmachev\\resources\\explosion.png"));
-                        }
-                    }
+
+
                 });
             }
         }
+
+//        frame.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//                int centerX = frame.getSize().width / cols / 2;
+//                int centerY = frame.getSize().height / rows / 2;
+//                int x = frame.getX() / centerX / 2;
+//                int y = frame.getY() / centerY / 2;
+//                if (e.getButton() == MouseEvent.BUTTON3) {
+//                    ActionListener start = e1 -> {
+//
+//                    };
+//                    Timer timer = new Timer(100, start);
+//                    timer.start();
+//                    if (e.getButton() == MouseEvent.BUTTON3) {
+//                        JOptionPane.showMessageDialog(frame, "row: " + x + " col: " + y);
+//                    }
+//                }
+//
+//            }
+//        });
     }
 
     public void startApplication() {
@@ -349,7 +383,7 @@ public class FrameView implements View {
                 listener.changeTimeCounter();
             }
         };
-        Timer timer = new Timer(100, start);
+        Timer timer = new Timer(0, start);
         timer.start();
     }
 
@@ -405,11 +439,13 @@ public class FrameView implements View {
             }
         }
         if (isVictory) {
-            JOptionPane.showMessageDialog(frame, "WIN");
             deactivateBoard();
+            JOptionPane.showMessageDialog(frame, "WIN");
             String name = JOptionPane.showInputDialog(frame, "Carve your name in Champions Hall!");
-            for (ViewListener listener : listeners) {
-                listener.carveName(name);
+            if (name != null) {
+                for (ViewListener listener : listeners) {
+                    listener.carveName(name);
+                }
             }
         }
         if (isLoss) {
@@ -453,7 +489,14 @@ public class FrameView implements View {
     }
 
     public void showScore(String[] table) {
-        JOptionPane.showMessageDialog(frame, table);
+        if (table == null) {
+            JOptionPane.showMessageDialog(frame, "Nobody is champion, yet!");
+        } else {
+            String[] newTable = new String[table.length + 1];
+            newTable[0] = "Place  Points   Time   Name";
+            System.arraycopy(table, 0, newTable, 1, table.length);
+            JOptionPane.showMessageDialog(frame, newTable);
+        }
     }
 
 }
